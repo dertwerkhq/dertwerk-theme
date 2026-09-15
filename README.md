@@ -28,6 +28,54 @@ import { BrandedAuthenticator } from '@dertwerk/theme/BrandedAuthenticator'
 import '@dertwerk/theme/themetoggle.css'
 ```
 
+## The feedback control
+
+A "Feedback" button in the top bar and the form behind it, offered only to
+accounts the API has flagged. It exists so somebody looking at the product with
+fresh eyes can say what confused them without leaving the page, and so the
+report carries the context they could not describe themselves.
+
+```ts
+// main.tsx — before createRoot, so an error during first mount is captured
+import { installFeedbackRecorder } from '@dertwerk/theme/feedback'
+installFeedbackRecorder()
+```
+
+```ts
+// wherever the app handles a failed request — an axios response interceptor,
+// or the fetch wrapper. Only the app knows which call failed.
+import { recordApiError } from '@dertwerk/theme/feedback'
+recordApiError({ method, path, status, detail })
+```
+
+```tsx
+import FeedbackWidget from '@dertwerk/theme/FeedbackWidget'
+import '@dertwerk/theme/feedback.css'
+
+<FeedbackWidget
+  app="farmrx"
+  enabled={me.feedback_enabled}   // from GET /me
+  orgId={currentOrg?.org_id}
+  breadcrumb={crumbs.join(' › ')}
+  buildSha={import.meta.env.VITE_BUILD_SHA}
+  className="topnav__action"      // the host's own nav-button class
+  submit={(report) => api.post('/feedback', report)}
+/>
+```
+
+`submit` is a prop for the same reason `persist` is on ThemeToggle: each app
+has its own client, base URL and auth, and the package has no business knowing
+about any of them. `className` is the host's nav-button class, so the control
+looks like the buttons beside it rather than like a widget bolted on.
+
+The page reports on itself. The route pattern is derived from the path
+(`/fields/7c3e…` becomes `/fields/:id`), so reports group by page instead of
+scattering across one row per record — no router required, which matters
+because three of the five apps have none. Also carried: title, breadcrumb,
+palette and mode, viewport, build, user agent, timezone, the previous route,
+a per-sitting id, and a rolling buffer of the last twenty console errors and
+failed API calls.
+
 ## What the host app must provide
 
 Three role tokens. The package deliberately does not guess at them, because
