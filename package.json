@@ -1,7 +1,7 @@
 {
   "name": "@dertwerk/theme",
-  "version": "1.1.0",
-  "description": "Palette, light/dark, the appearance control and the branded sign-in screen, shared by every DertWerk application.",
+  "version": "1.2.0",
+  "description": "Palette, light/dark, the appearance control, the branded sign-in screen and the in-app feedback control, shared by every DertWerk application.",
   "license": "UNLICENSED",
   "type": "module",
   "files": [
@@ -13,6 +13,14 @@
       "types": "./dist/theme.d.ts",
       "default": "./dist/theme.js"
     },
+    "./feedback": {
+      "types": "./dist/feedback.d.ts",
+      "default": "./dist/feedback.js"
+    },
+    "./FeedbackWidget": {
+      "types": "./dist/FeedbackWidget.d.ts",
+      "default": "./dist/FeedbackWidget.js"
+    },
     "./ThemeToggle": {
       "types": "./dist/ThemeToggle.d.ts",
       "default": "./dist/ThemeToggle.js"
@@ -23,7 +31,8 @@
     },
     "./theme.css": "./dist/theme.css",
     "./themetoggle.css": "./dist/themetoggle.css",
-    "./brandedAuthenticator.css": "./dist/brandedAuthenticator.css"
+    "./brandedAuthenticator.css": "./dist/brandedAuthenticator.css",
+    "./feedback.css": "./dist/feedback.css"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node copy-css.mjs"

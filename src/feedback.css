@@ -1,0 +1,246 @@
+/* The feedback dialog.
+ *
+ * The opener is not styled here at all: it is given the host's own nav-button
+ * class, so it looks like the Account and Sign Out buttons beside it in every
+ * app rather than like a widget bolted on. Only the dialog belongs to this
+ * file, and the dialog sits on a page surface in all five apps -- so unlike
+ * themetoggle.css it can use the ordinary role vocabulary and does not need
+ * --control-ink.
+ *
+ * Every colour is a role token, so this is correct in all four palette/mode
+ * combinations without a single rule branching on which one is active. That
+ * matters more here than anywhere: a feedback form that is itself unreadable
+ * in Gold/Light is a small joke at the expense of the person trying to report
+ * that something is unreadable in Gold/Light.
+ */
+
+.dwfb__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4vh 1rem 1rem;
+  overflow-y: auto;
+  /* Not pure black: in Light the page behind should still read as a page. */
+  background: color-mix(in srgb, var(--ground) 72%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.dwfb {
+  width: 100%;
+  max-width: 34rem;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--edge-strong);
+  border-radius: 12px;
+  padding: 1.25rem 1.25rem 1rem;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.35);
+}
+
+.dwfb__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
+.dwfb__lede {
+  margin: 0 0 1rem;
+  color: var(--ink-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+/* --- category ---------------------------------------------------------- */
+
+.dwfb__cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.dwfb__cat {
+  appearance: none;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--surface-sunk);
+  color: var(--ink);
+  border: 1px solid var(--edge);
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.dwfb__cat:hover { border-color: var(--edge-strong); }
+
+/* --on-accent, not --ink and emphatically not --accent-ink: the fill is a
+   solid brand colour and the label has to punch out of it. --accent-ink is the
+   accent at a value legible AS TEXT on a page, so using it here would paint
+   brand-green words onto a brand-green chip. */
+.dwfb__cat--on,
+.dwfb__cat--on:hover {
+  background: var(--accent);
+  border-color: var(--accent-edge);
+  color: var(--on-accent);
+}
+
+.dwfb__cat:focus-visible,
+.dwfb__field:focus-visible,
+.dwfb__btn:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
+}
+
+/* --- the two questions -------------------------------------------------- */
+
+.dwfb__label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0 0 0.3rem;
+}
+
+.dwfb__opt {
+  font-weight: 400;
+  color: var(--ink-subtle);
+  text-transform: lowercase;
+}
+
+.dwfb__field {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  padding: 0.55rem 0.65rem;
+  margin: 0 0 0.9rem;
+  background: var(--ground);
+  color: var(--ink);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  /* Vertical only. Horizontal resize inside a fixed-width dialog just breaks
+     the layout. */
+  resize: vertical;
+}
+
+.dwfb__field::placeholder { color: var(--ink-subtle); }
+.dwfb__field:focus { border-color: var(--accent-edge); }
+
+/* --- what gets sent ----------------------------------------------------- */
+
+.dwfb__what {
+  margin: 0 0 0.9rem;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
+.dwfb__what > summary {
+  cursor: pointer;
+  color: var(--link);
+  padding: 0.25rem 0;
+}
+
+.dwfb__whatlist {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0.6rem 0.7rem;
+  background: var(--surface-sunk);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+}
+
+.dwfb__whatlist li {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.2rem 0;
+}
+
+.dwfb__k {
+  flex: 0 0 9rem;
+  color: var(--ink-subtle);
+}
+
+.dwfb__v {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Long field ids and query strings must wrap rather than widen the dialog. */
+  overflow-wrap: anywhere;
+}
+
+.dwfb__v--mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.95em;
+}
+
+/* --- actions ------------------------------------------------------------ */
+
+.dwfb__err {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: var(--link-wash);
+  border: 1px solid var(--edge-strong);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+}
+
+.dwfb__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.dwfb__btn {
+  appearance: none;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--surface-sunk);
+  color: var(--ink);
+  border: 1px solid var(--edge-strong);
+}
+
+.dwfb__btn--go {
+  background: var(--accent);
+  border-color: var(--accent-edge);
+  color: var(--on-accent);
+}
+
+.dwfb__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dwfb__done .dwfb__lede { margin-bottom: 1.25rem; }
+
+/* --- narrow ------------------------------------------------------------- */
+
+@media (max-width: 480px) {
+  .dwfb__scrim { padding: 0; }
+  .dwfb {
+    max-width: none;
+    min-height: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+  /* The label/value pairs stop being a table at this width and become lines. */
+  .dwfb__whatlist li { flex-direction: column; gap: 0.1rem; }
+  .dwfb__k { flex: none; }
+  /* Full-width targets, and Send on the right where the thumb is. */
+  .dwfb__actions { flex-direction: row; }
+  .dwfb__btn { flex: 1 1 0; padding: 0.75rem 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dwfb__cat { transition: none; }
+}
