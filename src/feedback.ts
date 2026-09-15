@@ -21,7 +21,23 @@
  * wrapped and every failure is swallowed.
  */
 
-export type FeedbackApp = 'farmrx' | 'fsacre' | 'account' | 'admin' | 'landing'
+/** Which application a report came from.
+ *
+ * A union rather than a string, because the server validates the same closed
+ * set: a typo here should fail the build, not produce a 422 in front of
+ * somebody trying to tell us something is broken. Keep in step with
+ * FEEDBACK_APPS in farm-analytics-api/api/schemas/feedback.py.
+ *
+ * Not the same list as an organization's entitlements. The three dertwerk
+ * sites are not products anybody buys, but they are very much places a new
+ * user gets lost. */
+export type FeedbackApp =
+  | 'farmrx'
+  | 'fsacre'
+  | 'agplication'
+  | 'account'
+  | 'admin'
+  | 'landing'
 export type FeedbackCategory = 'confusing' | 'broken' | 'suggestion' | 'other'
 
 export interface ConsoleErrorEntry {
