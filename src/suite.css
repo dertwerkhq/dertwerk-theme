@@ -55,8 +55,7 @@
 .sw-seg,
 .sw-avatar,
 .sw-item,
-.sw-btn,
-.sw-feedback__tab {
+.sw-btn {
   opacity: 1;
   transform: none;
   box-sizing: border-box;
@@ -68,7 +67,6 @@
 .sw-avatar:hover,
 .sw-item:hover,
 .sw-btn:hover,
-.sw-feedback__tab:hover,
 .sw-bar__apps:active,
 .sw-seg:active,
 .sw-avatar:active,
@@ -543,6 +541,20 @@
   letter-spacing: 0.04em;
   cursor: pointer;
   box-shadow: -2px 4px 12px rgb(0 0 0 / 0.2);
+}
+
+/* The tab is drawn rotated, so its transform is part of its shape, not an
+   effect. It is held in every state at a specificity above a host app's
+   `button:hover` / `button:active` rules -- and above the shell's own reset,
+   which once set it to none on hover and flipped the tab over. */
+.sw-feedback .sw-feedback__tab,
+.sw-feedback .sw-feedback__tab:hover,
+.sw-feedback .sw-feedback__tab:active,
+.sw-feedback .sw-feedback__tab:focus-visible {
+  transform: rotate(180deg);
+  opacity: 1;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .sw-feedback__tab:hover {
