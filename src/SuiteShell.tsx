@@ -500,7 +500,7 @@ export default function SuiteShell(props: SuiteShellProps) {
                 <ThemeToggle value={theme} onChange={onTheme} persist={persistTheme} compact />
                 {onSignIn && (
                   <button type="button" className="sw-btn sw-btn--primary" onClick={onSignIn}>
-                    Sign in
+                    Sign In
                   </button>
                 )}
               </>
@@ -762,12 +762,12 @@ function AppsLayer({
         })}
         {home?.url && self?.id !== home.id && (
           <ItemLink href={home.url} go={go}>
-            DertWerk home
+            DertWerk Home
           </ItemLink>
         )}
         {hiddenProducts && accountUrl && (
           <ItemLink href={accountUrl} go={go}>
-            <span className="sw-item__more">Get more apps</span>
+            <span className="sw-item__more">Get More Apps</span>
           </ItemLink>
         )}
       </div>
@@ -1012,7 +1012,7 @@ function AccountLayer({
         </div>
         {feedbackEnabled && (
           <button type="button" className="sw-item" onClick={openFeedback}>
-            <span className="sw-item__label">Send feedback</span>
+            <span className="sw-item__label">Send Feedback</span>
           </button>
         )}
         {accountHref && !onAccountSite && (
@@ -1029,7 +1029,7 @@ function AccountLayer({
             session.signOut()
           }}
         >
-          <span className="sw-item__label">Sign out</span>
+          <span className="sw-item__label">Sign Out</span>
         </button>
       </div>
     </Layer>
