@@ -79,8 +79,23 @@ export interface LocationLevel {
   /** Keep it in the bar regardless -- e.g. the organization during a support
    *  session, where knowing whose data this is matters more than space. */
   alwaysShow?: boolean
-  /** Links shown under the level: "Organization settings", "All organizations". */
+  /** Links about one choice, drawn as icons at the end of its row: that
+   *  organization's settings, its admin page. Per row, so the gear beside an
+   *  organization always means *that* organization's settings, however many
+   *  are listed. */
+  optionLinks?: (id: string) => LocationOptionLink[]
+  /** Links about the whole list, drawn as a footer under it: "All
+   *  organizations", "All farms". Never a choice-specific link -- those read as
+   *  one more choice when listed among the choices. */
   actions?: { key: string; label: string; href: string }[]
+}
+
+export interface LocationOptionLink {
+  key: string
+  /** Read by screen readers and shown as a tooltip, e.g. "Mewes Farms settings". */
+  label: string
+  href: string
+  icon: 'settings' | 'external'
 }
 
 export interface SuiteSession {
@@ -266,6 +281,16 @@ const Icon = {
       <rect x="2" y="3" width="12" height="1.6" rx=".8" />
       <rect x="2" y="7.2" width="12" height="1.6" rx=".8" />
       <rect x="2" y="11.4" width="12" height="1.6" rx=".8" />
+    </svg>
+  ),
+  settings: (
+    <svg viewBox="0 0 16 16" aria-hidden="true" className="sw-icon">
+      <path d="M9.4 1.2 9.8 3a5.3 5.3 0 0 1 1.3.75l1.75-.6 1.4 2.43-1.38 1.23a5.4 5.4 0 0 1 0 1.5l1.38 1.23-1.4 2.43-1.75-.6A5.3 5.3 0 0 1 9.8 13l-.4 1.8H6.6L6.2 13a5.3 5.3 0 0 1-1.3-.75l-1.75.6-1.4-2.43 1.38-1.23a5.4 5.4 0 0 1 0-1.5L1.75 6.46l1.4-2.43 1.75.6A5.3 5.3 0 0 1 6.2 3l.4-1.8h2.8ZM8 5.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8Z" />
+    </svg>
+  ),
+  external: (
+    <svg viewBox="0 0 16 16" aria-hidden="true" className="sw-icon">
+      <path d="M9 2h5v5h-1.6V4.7L7.6 9.5 6.5 8.4l4.8-4.8H9V2ZM3 4h4v1.6H4.6v5.8h5.8V9H12v4H3V4Z" />
     </svg>
   ),
   chevron: (
@@ -842,18 +867,32 @@ function LocationSection({
               // operation page, "Field 9" is the way back to the field. Only on
               // the level's own page is it inert.
               const here = current && samePath(href, window.location.pathname)
+              const links = level.optionLinks?.(o.id) ?? []
               return (
-                <a
-                  key={o.id}
-                  className={`sw-item${current ? ' is-current' : ''}`}
-                  href={href}
-                  aria-current={current ? 'location' : undefined}
-                  onClick={(e) => (here ? (e.preventDefault(), undefined) : go(href, e))}
-                  data-autofocus={focus && current && (!searchable || narrow) ? '' : undefined}
-                >
-                  <span className="sw-item__label">{o.label}</span>
-                  {o.hint && <span className="sw-item__hint">{o.hint}</span>}
-                </a>
+                <div key={o.id} className={`sw-optrow${current ? ' is-current' : ''}`}>
+                  <a
+                    className={`sw-item${current ? ' is-current' : ''}`}
+                    href={href}
+                    aria-current={current ? 'location' : undefined}
+                    onClick={(e) => (here ? (e.preventDefault(), undefined) : go(href, e))}
+                    data-autofocus={focus && current && (!searchable || narrow) ? '' : undefined}
+                  >
+                    <span className="sw-item__label">{o.label}</span>
+                    {o.hint && <span className="sw-item__hint">{o.hint}</span>}
+                  </a>
+                  {links.map((l) => (
+                    <a
+                      key={l.key}
+                      className="sw-optlink"
+                      href={l.href}
+                      aria-label={l.label}
+                      title={l.label}
+                      onClick={(e) => go(l.href, e)}
+                    >
+                      {Icon[l.icon]}
+                    </a>
+                  ))}
+                </div>
               )
             })}
           </div>
@@ -862,11 +901,15 @@ function LocationSection({
         {failed && <div className="sw-item sw-item--quiet">Couldn't load the list.</div>}
         {q && shown.length === 0 && <div className="sw-item sw-item--quiet">No match</div>}
       </div>
-      {level.actions?.map((a) => (
-        <a key={a.key} className="sw-item sw-item--action" href={a.href} onClick={(e) => go(a.href, e)}>
-          {a.label}
-        </a>
-      ))}
+      {level.actions && level.actions.length > 0 && (
+        <div className="sw-loc__footer">
+          {level.actions.map((a) => (
+            <a key={a.key} className="sw-loc__footlink" href={a.href} onClick={(e) => go(a.href, e)}>
+              {a.label} →
+            </a>
+          ))}
+        </div>
+      )}
     </section>
   )
 }

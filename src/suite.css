@@ -424,8 +424,66 @@
   background: transparent;
 }
 
-.sw-item--action {
+/* One choice in the location switcher, with its own links (a gear for its
+   settings) at the end of the row. The row, not the link, carries the
+   current-choice shading, so the icons sit inside it. */
+.sw-optrow {
+  display: flex;
+  align-items: center;
+  border-radius: 7px;
+}
+
+.sw-optrow > .sw-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.sw-optrow.is-current {
+  background: var(--accent-wash, rgb(54 124 43 / 0.2));
+}
+
+.sw-optrow.is-current > .sw-item {
+  background: transparent;
+}
+
+.sw-optlink {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 2px;
+  border-radius: 7px;
+  color: var(--ink-subtle, #9ca3af);
+}
+
+.sw-optlink .sw-icon {
+  color: inherit;
+}
+
+.sw-optlink:hover {
+  color: var(--ink, #e5e7eb);
+  background: var(--surface-sunk, rgb(0 0 0 / 0.15));
+}
+
+/* Links about the whole list, set apart from the choices. */
+.sw-loc__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.65rem 0.2rem;
+  border-top: 1px solid var(--edge, #374151);
+}
+
+.sw-loc__footlink {
+  font-size: 0.82rem;
   color: var(--link, #60a5fa);
+  text-decoration: none;
+}
+
+.sw-loc__footlink:hover {
+  text-decoration: underline;
 }
 
 .sw-item__label {
