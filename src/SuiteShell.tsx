@@ -401,6 +401,15 @@ export default function SuiteShell(props: SuiteShellProps) {
     return !((lvl.hideWhenSingle ?? true) && count === 1)
   })
 
+  // With nothing to switch to, the bar still names the place: the two deepest
+  // levels, e.g. "Mewes Farms, Inc. / 2026".
+  const staticPlace =
+    location
+      .filter((l) => l.current)
+      .slice(-2)
+      .map((l) => l.current!.label)
+      .join(' / ') || null
+
   const breadcrumb =
     feedback?.breadcrumb ?? (location.map((l) => l.current?.label).filter(Boolean).join(' › ') || null)
 
@@ -443,6 +452,13 @@ export default function SuiteShell(props: SuiteShellProps) {
           </button>
 
           <nav className="sw-bar__location" aria-label="Location">
+            {barLevels.length === 0 && staticPlace && (
+              // Nothing to switch to at any level: say where this is, without
+              // a control that opens a menu with no choices in it.
+              <span className="sw-seg sw-seg--current sw-seg--static">
+                <span className="sw-seg__text">{staticPlace}</span>
+              </span>
+            )}
             {barLevels.map((lvl, i) => (
               <span key={lvl.key} className="sw-seg-wrap">
                 {i > 0 && <span className="sw-seg-sep" aria-hidden="true">/</span>}
@@ -777,11 +793,42 @@ function LocationLayer({
   return (
     <Layer narrow={narrow} side="sheet" align="center" label="Change location" close={close} triggerRef={triggerRef}>
       <div className="sw-loc">
-        {levels.map((lvl) => (
-          <LocationSection key={lvl.key} level={lvl} focus={lvl.key === focusKey} narrow={narrow} go={go} />
-        ))}
+        <NestedLevels levels={levels} index={0} focusKey={focusKey} narrow={narrow} go={go} />
       </div>
     </Layer>
+  )
+}
+
+/**
+ * Each level drawn inside the one above it -- a farm inside its organization,
+ * a field inside its farm -- indented, with a guide line down the left edge of
+ * everything that belongs to the level above. Stacked flat, the levels read as
+ * unrelated lists.
+ */
+function NestedLevels({
+  levels,
+  index,
+  focusKey,
+  narrow,
+  go,
+}: {
+  levels: LocationLevel[]
+  index: number
+  focusKey: string
+  narrow: boolean
+  go: (href: string, e?: ReactMouseEvent) => void
+}) {
+  const lvl = levels[index]
+  if (!lvl) return null
+  const deepest = index === levels.length - 1
+  return (
+    <LocationSection level={lvl} focus={lvl.key === focusKey} narrow={narrow} deepest={deepest} go={go}>
+      {!deepest && (
+        <div className="sw-loc__child">
+          <NestedLevels levels={levels} index={index + 1} focusKey={focusKey} narrow={narrow} go={go} />
+        </div>
+      )}
+    </LocationSection>
   )
 }
 
@@ -796,12 +843,16 @@ function LocationSection({
   level,
   focus,
   narrow,
+  deepest,
   go,
+  children,
 }: {
   level: LocationLevel
   focus: boolean
   narrow: boolean
+  deepest: boolean
   go: (href: string, e?: ReactMouseEvent) => void
+  children?: ReactNode
 }) {
   const listRef = useRef<HTMLDivElement>(null)
   const [options, setOptions] = useState<LocationOption[] | null>(level.options ?? null)
@@ -845,7 +896,10 @@ function LocationSection({
   }
 
   return (
-    <section className="sw-group sw-loc__level" aria-label={level.label}>
+    <section
+      className={`sw-group sw-loc__level${deepest ? ' sw-loc__level--deepest' : ''}`}
+      aria-label={level.label}
+    >
       <div className="sw-group__title">{level.label}</div>
       {searchable && (
         <input
@@ -914,6 +968,7 @@ function LocationSection({
           ))}
         </div>
       )}
+      {children}
     </section>
   )
 }

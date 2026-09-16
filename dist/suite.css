@@ -483,6 +483,34 @@
   background: var(--surface-sunk, rgb(0 0 0 / 0.15));
 }
 
+/* Nesting: each level sits inside the one above it, indented, with a guide
+   line down everything that belongs to the parent choice. */
+.sw-loc__child {
+  margin: 0.35rem 0 0 0.85rem;
+  padding-left: 0.55rem;
+  border-left: 2px solid var(--edge-strong, var(--edge, #374151));
+}
+
+/* Only the deepest level's current choice is fully marked; the ones above it
+   are context, so they keep the accent bar with a quieter fill. */
+.sw-loc__level:not(.sw-loc__level--deepest) > .sw-loc__list .sw-optrow.is-current,
+.sw-loc__level:not(.sw-loc__level--deepest) > .sw-loc__list .sw-item.is-current {
+  background: color-mix(in srgb, var(--accent, #367c2b) 12%, transparent);
+}
+
+.sw-loc__level:not(.sw-loc__level--deepest) > .sw-loc__list .sw-optrow.is-current > .sw-item {
+  background: transparent;
+}
+
+.sw-seg--static {
+  cursor: default;
+}
+
+.sw-seg--static:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
 /* Links about the whole list, set apart from the choices. */
 .sw-loc__footer {
   display: flex;

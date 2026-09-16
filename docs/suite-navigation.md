@@ -6,14 +6,27 @@ for using it. The reasoning, the alternatives and the rollout live in
 
 ## The bar
 
+Two menus, two questions. Keep them apart:
+
+- **App menu (left): what are you doing?** This application's sections and
+  tools, and the way to other applications. A section appears once, here
+  (or in the sidebar that mirrors it on wide screens), never also in the
+  location menu.
+- **Location (next to it): which one?** Which organization, farm, field, year
+  you are looking at, and its siblings of the same kind, nested
+  organization > farm > field. Only things that are *records you switch
+  between* belong here. A tool (an Agplication advisor) is not a record.
+
+
 Three slots, and it takes no children:
 
 1. **App menu.** This app's destinations (`nav`), then the other apps the
    person can open, DertWerk home, and "Get more apps".
 2. **Location.** One segment per level (`location`). A level with a single
    choice is left out of the bar, at any depth, and stays in the switcher
-   (`alwaysShow` overrides this, e.g. for support sessions). The bar may show no
-   location at all. Links about one choice (its settings) go in `optionLinks`,
+   (`alwaysShow` overrides this, e.g. for support sessions). When no level has a
+   choice, the bar names the place as plain text instead of offering a menu with
+   nothing in it. Links about one choice (its settings) go in `optionLinks`,
    as icons on that choice's row. Links about the whole list go in `actions`.
 3. **You.** The account menu: email, Appearance, Send feedback, Account or
    Admin, Sign out. Signed out: Sign in plus a compact appearance control.
