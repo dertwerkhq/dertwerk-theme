@@ -28,6 +28,26 @@ import { BrandedAuthenticator } from '@dertwerk/theme/BrandedAuthenticator'
 import '@dertwerk/theme/themetoggle.css'
 ```
 
+## The suite shell
+
+The frame every app sits in: the three-slot bar, the app menu, the location
+switcher, the account menu, and the phone drawer and sheet. **Read
+[docs/suite-navigation.md](docs/suite-navigation.md) before using it**; it says
+what may go where.
+
+```tsx
+import SuiteShell, { useUnsavedChanges } from '@dertwerk/theme/SuiteShell'
+import { useAppCatalog, appOrgUrl } from '@dertwerk/theme/catalog'
+import { decideAccess } from '@dertwerk/theme/access'
+import '@dertwerk/theme/suite.css'
+```
+
+`catalog` and `access` are the only entry points here that know about the API
+or access. The appearance entry points (`.`, `ThemeToggle`, the CSS) never
+import them, so an app can take the palette without the navigation.
+
+`src/catalogSnapshot.ts` is generated: `node scripts/snapshot-catalog.mjs`.
+
 ## The feedback control
 
 A "Feedback" button in the top bar and the form behind it, offered only to
