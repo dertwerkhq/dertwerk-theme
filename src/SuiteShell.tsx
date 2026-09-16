@@ -715,7 +715,7 @@ function AppsLayer({
             </ItemLink>
           )
         })}
-        {home?.url && (
+        {home?.url && self?.id !== home.id && (
           <ItemLink href={home.url} go={go}>
             DertWerk home
           </ItemLink>
