@@ -2,7 +2,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "farmrx",
         "name": "FarmRx",
-        "tagline": "Precision farm analytics",
+        "tagline": "Precision Farm Analytics",
         "kind": "product",
         "status": "live",
         "url": "https://farmrx.dertwerk.com",
@@ -13,7 +13,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "fsacre",
         "name": "FSAcre",
-        "tagline": "FSA acreage certification",
+        "tagline": "FSA Acreage Certification",
         "kind": "product",
         "status": "live",
         "url": "https://fsacre.dertwerk.com",
@@ -24,7 +24,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "agplication",
         "name": "Agplication",
-        "tagline": "Weed, insect & disease plans",
+        "tagline": "Weed, Insect & Disease Plans",
         "kind": "product",
         "status": "beta",
         "url": "https://agplication.dertwerk.com",
@@ -35,7 +35,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "machinery",
         "name": "Machinery",
-        "tagline": "Equipment rental & sales",
+        "tagline": "Equipment Rental & Sales",
         "kind": "product",
         "status": "beta",
         "url": "https://machinery.dertwerk.com",
@@ -46,7 +46,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "realestate",
         "name": "Land",
-        "tagline": "Farm real estate & listings",
+        "tagline": "Farm Real Estate & Listings",
         "kind": "product",
         "status": "soon",
         "url": null,
@@ -57,7 +57,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "earthworks",
         "name": "Earthworks",
-        "tagline": "Earth-moving & site work",
+        "tagline": "Earth-Moving & Site Work",
         "kind": "product",
         "status": "soon",
         "url": null,
@@ -68,7 +68,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "grain",
         "name": "Grain",
-        "tagline": "Markets & contracts",
+        "tagline": "Markets & Contracts",
         "kind": "product",
         "status": "soon",
         "url": null,
@@ -79,7 +79,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "inputs",
         "name": "Inputs",
-        "tagline": "Seed, fertilizer & chem",
+        "tagline": "Seed, Fertilizer & Chem",
         "kind": "product",
         "status": "soon",
         "url": null,
@@ -90,7 +90,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "water",
         "name": "Water",
-        "tagline": "Irrigation & water rights",
+        "tagline": "Irrigation & Water Rights",
         "kind": "product",
         "status": "soon",
         "url": null,
@@ -112,7 +112,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "account",
         "name": "Account",
-        "tagline": "Your organization, people and applications",
+        "tagline": "Your Organization, People and Applications",
         "kind": "site",
         "status": "live",
         "url": "https://account.dertwerk.com",
@@ -123,7 +123,7 @@ export const CATALOG_SNAPSHOT = [
     {
         "id": "admin",
         "name": "Admin",
-        "tagline": "Platform administration",
+        "tagline": "Platform Administration",
         "kind": "site",
         "status": "live",
         "url": "https://admin.dertwerk.com",

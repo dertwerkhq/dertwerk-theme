@@ -65,6 +65,10 @@ Both use the same drawer on a phone (≤760px).
   same organization.
 - Declare unsaved work with `useUnsavedChanges(dirty)`. Links the app renders
   itself call `useConfirmLeave()`.
+- **If it is not a sentence, Title Case.** Menu items, links, buttons, headings,
+  labels, badges and taglines: "Soil Sampling Jobs", "Sign Out". Sentence case
+  only for actual sentences: help text, errors, confirms, tooltips and
+  `aria-label`s, placeholders.
 - Put the org name in the heading of settings pages, and in any confirmation of
   a consequential action.
 
