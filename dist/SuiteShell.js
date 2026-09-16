@@ -206,16 +206,23 @@ export default function SuiteShell(props) {
         const count = lvl.count ?? lvl.options?.length;
         return !((lvl.hideWhenSingle ?? true) && count === 1);
     });
+    // With nothing to switch to, the bar still names the place: the two deepest
+    // levels, e.g. "Mewes Farms, Inc. / 2026".
+    const staticPlace = location
+        .filter((l) => l.current)
+        .slice(-2)
+        .map((l) => l.current.label)
+        .join(' / ') || null;
     const breadcrumb = feedback?.breadcrumb ?? (location.map((l) => l.current?.label).filter(Boolean).join(' › ') || null);
     const appsTrigger = useRef(null);
     const accountTrigger = useRef(null);
     const locationTrigger = useRef(null);
     const feedbackHost = useRef(null);
     const hasSidebar = layout === 'workspace' && nav.length > 0 && !narrow;
-    return (_jsx(GuardContext.Provider, { value: guardApi, children: _jsxs("div", { className: `sw-shell sw-shell--${layout}${scroll === 'contained' ? ' sw-shell--contained' : ''}${hasSidebar ? ' sw-shell--sidebar' : ''}`, children: [_jsxs("header", { className: "sw-bar", children: [_jsx("button", { ref: appsTrigger, type: "button", className: `sw-bar__apps${layer === 'apps' ? ' is-open' : ''}`, "aria-expanded": layer === 'apps', "aria-haspopup": "dialog", "aria-label": narrow ? 'Menu' : `${self?.name ?? app} menu`, onClick: () => setLayer(layer === 'apps' ? null : 'apps'), children: narrow ? (_jsxs(_Fragment, { children: [Icon.menu, _jsx("span", { className: "sw-bar__menu-label", children: "Menu" })] })) : (_jsxs(_Fragment, { children: [Icon.grid, _jsx("span", { className: "sw-bar__name", children: self?.name ?? app }), Icon.chevron] })) }), _jsx("nav", { className: "sw-bar__location", "aria-label": "Location", children: barLevels.map((lvl, i) => (_jsxs("span", { className: "sw-seg-wrap", children: [i > 0 && _jsx("span", { className: "sw-seg-sep", "aria-hidden": "true", children: "/" }), _jsxs("button", { type: "button", className: `sw-seg${i === barLevels.length - 1 ? ' sw-seg--current' : ''}${typeof layer === 'object' && layer?.location === lvl.key ? ' is-open' : ''}`, "aria-haspopup": "dialog", "aria-expanded": typeof layer === 'object' && layer?.location === lvl.key, "aria-label": `${lvl.label}: ${lvl.current.label}. Change`, onClick: (e) => {
-                                            locationTrigger.current = e.currentTarget;
-                                            setLayer(typeof layer === 'object' && layer?.location === lvl.key ? null : { location: lvl.key });
-                                        }, children: [_jsx("span", { className: "sw-seg__text", children: lvl.current.label }), Icon.chevron] })] }, lvl.key))) }), _jsx("div", { className: "sw-bar__you", children: session ? (_jsx("button", { ref: accountTrigger, type: "button", className: `sw-avatar${layer === 'account' ? ' is-open' : ''}`, "aria-haspopup": "dialog", "aria-expanded": layer === 'account', "aria-label": `Account menu${session.email ? ` for ${session.email}` : ''}`, onClick: () => setLayer(layer === 'account' ? null : 'account'), children: initials(session.email) })) : (_jsxs(_Fragment, { children: [_jsx(ThemeToggle, { value: theme, onChange: onTheme, persist: persistTheme, compact: true }), onSignIn && (_jsx("button", { type: "button", className: "sw-btn sw-btn--primary", onClick: onSignIn, children: "Sign in" }))] })) })] }), layer === 'apps' && (_jsx(AppsLayer, { narrow: narrow, close: close, triggerRef: appsTrigger, self: self, 
+    return (_jsx(GuardContext.Provider, { value: guardApi, children: _jsxs("div", { className: `sw-shell sw-shell--${layout}${scroll === 'contained' ? ' sw-shell--contained' : ''}${hasSidebar ? ' sw-shell--sidebar' : ''}`, children: [_jsxs("header", { className: "sw-bar", children: [_jsx("button", { ref: appsTrigger, type: "button", className: `sw-bar__apps${layer === 'apps' ? ' is-open' : ''}`, "aria-expanded": layer === 'apps', "aria-haspopup": "dialog", "aria-label": narrow ? 'Menu' : `${self?.name ?? app} menu`, onClick: () => setLayer(layer === 'apps' ? null : 'apps'), children: narrow ? (_jsxs(_Fragment, { children: [Icon.menu, _jsx("span", { className: "sw-bar__menu-label", children: "Menu" })] })) : (_jsxs(_Fragment, { children: [Icon.grid, _jsx("span", { className: "sw-bar__name", children: self?.name ?? app }), Icon.chevron] })) }), _jsxs("nav", { className: "sw-bar__location", "aria-label": "Location", children: [barLevels.length === 0 && staticPlace && (_jsx("span", { className: "sw-seg sw-seg--current sw-seg--static", children: _jsx("span", { className: "sw-seg__text", children: staticPlace }) })), barLevels.map((lvl, i) => (_jsxs("span", { className: "sw-seg-wrap", children: [i > 0 && _jsx("span", { className: "sw-seg-sep", "aria-hidden": "true", children: "/" }), _jsxs("button", { type: "button", className: `sw-seg${i === barLevels.length - 1 ? ' sw-seg--current' : ''}${typeof layer === 'object' && layer?.location === lvl.key ? ' is-open' : ''}`, "aria-haspopup": "dialog", "aria-expanded": typeof layer === 'object' && layer?.location === lvl.key, "aria-label": `${lvl.label}: ${lvl.current.label}. Change`, onClick: (e) => {
+                                                locationTrigger.current = e.currentTarget;
+                                                setLayer(typeof layer === 'object' && layer?.location === lvl.key ? null : { location: lvl.key });
+                                            }, children: [_jsx("span", { className: "sw-seg__text", children: lvl.current.label }), Icon.chevron] })] }, lvl.key)))] }), _jsx("div", { className: "sw-bar__you", children: session ? (_jsx("button", { ref: accountTrigger, type: "button", className: `sw-avatar${layer === 'account' ? ' is-open' : ''}`, "aria-haspopup": "dialog", "aria-expanded": layer === 'account', "aria-label": `Account menu${session.email ? ` for ${session.email}` : ''}`, onClick: () => setLayer(layer === 'account' ? null : 'account'), children: initials(session.email) })) : (_jsxs(_Fragment, { children: [_jsx(ThemeToggle, { value: theme, onChange: onTheme, persist: persistTheme, compact: true }), onSignIn && (_jsx("button", { type: "button", className: "sw-btn sw-btn--primary", onClick: onSignIn, children: "Sign in" }))] })) })] }), layer === 'apps' && (_jsx(AppsLayer, { narrow: narrow, close: close, triggerRef: appsTrigger, self: self, 
                     // With the sidebar on screen, the menu does not repeat it: it is the
                     // way to other applications. Without one (browse apps, and every app
                     // on a phone) it carries the app's destinations too.
@@ -273,14 +280,27 @@ function AppsLayer({ narrow, close, triggerRef, self, nav, otherProducts, home, 
                     }), home?.url && self?.id !== home.id && (_jsx(ItemLink, { href: home.url, go: go, children: "DertWerk home" })), hiddenProducts && accountUrl && (_jsx(ItemLink, { href: accountUrl, go: go, children: _jsx("span", { className: "sw-item__more", children: "Get more apps" }) }))] })] }));
 }
 function LocationLayer({ narrow, close, triggerRef, levels, focusKey, go, }) {
-    return (_jsx(Layer, { narrow: narrow, side: "sheet", align: "center", label: "Change location", close: close, triggerRef: triggerRef, children: _jsx("div", { className: "sw-loc", children: levels.map((lvl) => (_jsx(LocationSection, { level: lvl, focus: lvl.key === focusKey, narrow: narrow, go: go }, lvl.key))) }) }));
+    return (_jsx(Layer, { narrow: narrow, side: "sheet", align: "center", label: "Change location", close: close, triggerRef: triggerRef, children: _jsx("div", { className: "sw-loc", children: _jsx(NestedLevels, { levels: levels, index: 0, focusKey: focusKey, narrow: narrow, go: go }) }) }));
+}
+/**
+ * Each level drawn inside the one above it -- a farm inside its organization,
+ * a field inside its farm -- indented, with a guide line down the left edge of
+ * everything that belongs to the level above. Stacked flat, the levels read as
+ * unrelated lists.
+ */
+function NestedLevels({ levels, index, focusKey, narrow, go, }) {
+    const lvl = levels[index];
+    if (!lvl)
+        return null;
+    const deepest = index === levels.length - 1;
+    return (_jsx(LocationSection, { level: lvl, focus: lvl.key === focusKey, narrow: narrow, deepest: deepest, go: go, children: !deepest && (_jsx("div", { className: "sw-loc__child", children: _jsx(NestedLevels, { levels: levels, index: index + 1, focusKey: focusKey, narrow: narrow, go: go }) })) }));
 }
 const SEARCH_AFTER = 8;
 function samePath(a, b) {
     const norm = (p) => p.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
     return norm(a) === norm(b);
 }
-function LocationSection({ level, focus, narrow, go, }) {
+function LocationSection({ level, focus, narrow, deepest, go, children, }) {
     const listRef = useRef(null);
     const [options, setOptions] = useState(level.options ?? null);
     const [failed, setFailed] = useState(false);
@@ -320,7 +340,7 @@ function LocationSection({ level, focus, narrow, go, }) {
         else
             groups.push([g, [o]]);
     }
-    return (_jsxs("section", { className: "sw-group sw-loc__level", "aria-label": level.label, children: [_jsx("div", { className: "sw-group__title", children: level.label }), searchable && (_jsx("input", { className: "sw-search", type: "search", placeholder: `Search ${list.length} ${level.label.toLowerCase()}s`, "aria-label": `Search ${level.label.toLowerCase()}s`, value: query, onChange: (e) => setQuery(e.target.value), "data-autofocus": focus && !narrow ? '' : undefined })), _jsxs("div", { ref: listRef, className: searchable ? 'sw-loc__list sw-loc__list--scroll' : 'sw-loc__list', children: [groups.map(([g, opts]) => (_jsxs("div", { children: [g && _jsx("div", { className: "sw-loc__sub", children: g }), opts.map((o) => {
+    return (_jsxs("section", { className: `sw-group sw-loc__level${deepest ? ' sw-loc__level--deepest' : ''}`, "aria-label": level.label, children: [_jsx("div", { className: "sw-group__title", children: level.label }), searchable && (_jsx("input", { className: "sw-search", type: "search", placeholder: `Search ${list.length} ${level.label.toLowerCase()}s`, "aria-label": `Search ${level.label.toLowerCase()}s`, value: query, onChange: (e) => setQuery(e.target.value), "data-autofocus": focus && !narrow ? '' : undefined })), _jsxs("div", { ref: listRef, className: searchable ? 'sw-loc__list sw-loc__list--scroll' : 'sw-loc__list', children: [groups.map(([g, opts]) => (_jsxs("div", { children: [g && _jsx("div", { className: "sw-loc__sub", children: g }), opts.map((o) => {
                                 const current = o.id === level.current?.id;
                                 const href = level.href(o.id);
                                 // The current item is still a link from anywhere below it: on an
@@ -329,7 +349,7 @@ function LocationSection({ level, focus, narrow, go, }) {
                                 const here = current && samePath(href, window.location.pathname);
                                 const links = level.optionLinks?.(o.id) ?? [];
                                 return (_jsxs("div", { className: `sw-optrow${current ? ' is-current' : ''}`, children: [_jsxs("a", { className: `sw-item${current ? ' is-current' : ''}`, href: href, "aria-current": current ? 'location' : undefined, onClick: (e) => (here ? (e.preventDefault(), undefined) : go(href, e)), "data-autofocus": focus && current && (!searchable || narrow) ? '' : undefined, children: [_jsx("span", { className: "sw-item__label", children: o.label }), o.hint && _jsx("span", { className: "sw-item__hint", children: o.hint })] }), links.map((l) => (_jsx("a", { className: "sw-optlink", href: l.href, "aria-label": l.label, title: l.label, onClick: (e) => go(l.href, e), children: Icon[l.icon] }, l.key)))] }, o.id));
-                            })] }, g ?? '_'))), options === null && !failed && level.loadOptions && _jsx("div", { className: "sw-item sw-item--quiet", children: "Loading\u2026" }), failed && _jsx("div", { className: "sw-item sw-item--quiet", children: "Couldn't load the list." }), q && shown.length === 0 && _jsx("div", { className: "sw-item sw-item--quiet", children: "No match" })] }), level.actions && level.actions.length > 0 && (_jsx("div", { className: "sw-loc__footer", children: level.actions.map((a) => (_jsxs("a", { className: "sw-loc__footlink", href: a.href, onClick: (e) => go(a.href, e), children: [a.label, " \u2192"] }, a.key))) }))] }));
+                            })] }, g ?? '_'))), options === null && !failed && level.loadOptions && _jsx("div", { className: "sw-item sw-item--quiet", children: "Loading\u2026" }), failed && _jsx("div", { className: "sw-item sw-item--quiet", children: "Couldn't load the list." }), q && shown.length === 0 && _jsx("div", { className: "sw-item sw-item--quiet", children: "No match" })] }), level.actions && level.actions.length > 0 && (_jsx("div", { className: "sw-loc__footer", children: level.actions.map((a) => (_jsxs("a", { className: "sw-loc__footlink", href: a.href, onClick: (e) => go(a.href, e), children: [a.label, " \u2192"] }, a.key))) })), children] }));
 }
 function AccountLayer({ narrow, close, triggerRef, session, accountHref, accountLabel, onAccountSite, theme, onTheme, persistTheme, feedbackEnabled, openFeedback, go, }) {
     return (_jsx(Layer, { narrow: narrow, side: "sheet", align: "end", label: "Account", close: close, triggerRef: triggerRef, children: _jsxs("div", { className: "sw-group", children: [session.email && _jsx("div", { className: "sw-who", children: session.email }), _jsxs("div", { className: "sw-appearance", children: [_jsx("span", { className: "sw-appearance__label", children: "Appearance" }), _jsx(ThemeToggle, { value: theme, onChange: onTheme, persist: persistTheme, compact: true })] }), feedbackEnabled && (_jsx("button", { type: "button", className: "sw-item", onClick: openFeedback, children: _jsx("span", { className: "sw-item__label", children: "Send feedback" }) })), accountHref && !onAccountSite && (_jsx(ItemLink, { href: accountHref, go: go, external: true, children: accountLabel })), _jsx("div", { className: "sw-rule" }), _jsx("button", { type: "button", className: "sw-item", onClick: () => {
