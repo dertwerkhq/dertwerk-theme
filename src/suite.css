@@ -37,7 +37,12 @@
   min-width: 0;
 }
 
-.sw-bar button {
+/* Only the shell's own controls. A bare `.sw-bar button` also reached the
+   appearance control's buttons and overrode its selected-state ink, which
+   left the chosen option as a blank pill in the signed-out bar. */
+.sw-bar__apps,
+.sw-seg,
+.sw-avatar {
   font: inherit;
   color: inherit;
 }
