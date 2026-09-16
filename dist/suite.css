@@ -42,6 +42,37 @@
   color: inherit;
 }
 
+/* Host apps style the bare `button` element -- padding, hover opacity, a
+   press nudge (FarmRx and FSAcre both do). A class selector outranks it, so
+   every shell control states these outright rather than inheriting a 1rem
+   side padding that clipped the avatar's initials to one letter. */
+.sw-bar__apps,
+.sw-seg,
+.sw-avatar,
+.sw-item,
+.sw-btn,
+.sw-feedback__tab {
+  opacity: 1;
+  transform: none;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+.sw-bar__apps:hover,
+.sw-seg:hover,
+.sw-avatar:hover,
+.sw-item:hover,
+.sw-btn:hover,
+.sw-feedback__tab:hover,
+.sw-bar__apps:active,
+.sw-seg:active,
+.sw-avatar:active,
+.sw-item:active,
+.sw-btn:active {
+  opacity: 1;
+  transform: none;
+}
+
 .sw-bar__apps,
 .sw-seg,
 .sw-avatar {
@@ -155,6 +186,10 @@
 }
 
 .sw-avatar {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -348,6 +383,7 @@
 
 .sw-item {
   appearance: none;
+  font-weight: 400;
   display: flex;
   align-items: center;
   justify-content: space-between;
