@@ -270,6 +270,10 @@ function LocationLayer({ narrow, close, triggerRef, levels, focusKey, go, }) {
     return (_jsx(Layer, { narrow: narrow, side: "sheet", align: "center", label: "Change location", close: close, triggerRef: triggerRef, children: _jsx("div", { className: "sw-loc", children: levels.map((lvl) => (_jsx(LocationSection, { level: lvl, focus: lvl.key === focusKey, narrow: narrow, go: go }, lvl.key))) }) }));
 }
 const SEARCH_AFTER = 8;
+function samePath(a, b) {
+    const norm = (p) => p.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/';
+    return norm(a) === norm(b);
+}
 function LocationSection({ level, focus, narrow, go, }) {
     const listRef = useRef(null);
     const [options, setOptions] = useState(level.options ?? null);
@@ -312,7 +316,12 @@ function LocationSection({ level, focus, narrow, go, }) {
     }
     return (_jsxs("section", { className: "sw-group sw-loc__level", "aria-label": level.label, children: [_jsx("div", { className: "sw-group__title", children: level.label }), searchable && (_jsx("input", { className: "sw-search", type: "search", placeholder: `Search ${list.length} ${level.label.toLowerCase()}s`, "aria-label": `Search ${level.label.toLowerCase()}s`, value: query, onChange: (e) => setQuery(e.target.value), "data-autofocus": focus && !narrow ? '' : undefined })), _jsxs("div", { ref: listRef, className: searchable ? 'sw-loc__list sw-loc__list--scroll' : 'sw-loc__list', children: [groups.map(([g, opts]) => (_jsxs("div", { children: [g && _jsx("div", { className: "sw-loc__sub", children: g }), opts.map((o) => {
                                 const current = o.id === level.current?.id;
-                                return (_jsxs("a", { className: `sw-item${current ? ' is-current' : ''}`, href: level.href(o.id), "aria-current": current ? 'location' : undefined, onClick: (e) => (current ? (e.preventDefault(), undefined) : go(level.href(o.id), e)), "data-autofocus": focus && current && (!searchable || narrow) ? '' : undefined, children: [_jsx("span", { className: "sw-item__label", children: o.label }), o.hint && _jsx("span", { className: "sw-item__hint", children: o.hint })] }, o.id));
+                                const href = level.href(o.id);
+                                // The current item is still a link from anywhere below it: on an
+                                // operation page, "Field 9" is the way back to the field. Only on
+                                // the level's own page is it inert.
+                                const here = current && samePath(href, window.location.pathname);
+                                return (_jsxs("a", { className: `sw-item${current ? ' is-current' : ''}`, href: href, "aria-current": current ? 'location' : undefined, onClick: (e) => (here ? (e.preventDefault(), undefined) : go(href, e)), "data-autofocus": focus && current && (!searchable || narrow) ? '' : undefined, children: [_jsx("span", { className: "sw-item__label", children: o.label }), o.hint && _jsx("span", { className: "sw-item__hint", children: o.hint })] }, o.id));
                             })] }, g ?? '_'))), options === null && !failed && level.loadOptions && _jsx("div", { className: "sw-item sw-item--quiet", children: "Loading\u2026" }), failed && _jsx("div", { className: "sw-item sw-item--quiet", children: "Couldn't load the list." }), q && shown.length === 0 && _jsx("div", { className: "sw-item sw-item--quiet", children: "No match" })] }), level.actions?.map((a) => (_jsx("a", { className: "sw-item sw-item--action", href: a.href, onClick: (e) => go(a.href, e), children: a.label }, a.key)))] }));
 }
 function AccountLayer({ narrow, close, triggerRef, session, accountHref, accountLabel, onAccountSite, theme, onTheme, persistTheme, feedbackEnabled, openFeedback, go, }) {

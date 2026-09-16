@@ -758,6 +758,11 @@ function LocationLayer({
 
 const SEARCH_AFTER = 8
 
+function samePath(a: string, b: string): boolean {
+  const norm = (p: string) => p.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/'
+  return norm(a) === norm(b)
+}
+
 function LocationSection({
   level,
   focus,
@@ -832,13 +837,18 @@ function LocationSection({
             {g && <div className="sw-loc__sub">{g}</div>}
             {opts.map((o) => {
               const current = o.id === level.current?.id
+              const href = level.href(o.id)
+              // The current item is still a link from anywhere below it: on an
+              // operation page, "Field 9" is the way back to the field. Only on
+              // the level's own page is it inert.
+              const here = current && samePath(href, window.location.pathname)
               return (
                 <a
                   key={o.id}
                   className={`sw-item${current ? ' is-current' : ''}`}
-                  href={level.href(o.id)}
+                  href={href}
                   aria-current={current ? 'location' : undefined}
-                  onClick={(e) => (current ? (e.preventDefault(), undefined) : go(level.href(o.id), e))}
+                  onClick={(e) => (here ? (e.preventDefault(), undefined) : go(href, e))}
                   data-autofocus={focus && current && (!searchable || narrow) ? '' : undefined}
                 >
                   <span className="sw-item__label">{o.label}</span>
