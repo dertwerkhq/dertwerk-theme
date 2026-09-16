@@ -384,6 +384,11 @@ export default function SuiteShell(props: SuiteShellProps) {
     entitledApps !== null &&
     catalog.some((a) => a.kind === 'product' && a.status !== 'soon' && a.request_access && !entitledApps.includes(a.id))
 
+  const resumeUrl = (a: SuiteApp | undefined): string | null => {
+    if (!a?.url) return null
+    if (orgId && a.org_path) return `${a.url}/?org=${encodeURIComponent(orgId)}`
+    return a.url
+  }
   const withOrg = (a: SuiteApp | undefined): string | null => {
     if (!a?.url) return null
     if (orgId && a.org_path) return a.url + a.org_path.replace('{org_id}', encodeURIComponent(orgId))
@@ -524,6 +529,7 @@ export default function SuiteShell(props: SuiteShellProps) {
             hiddenProducts={hiddenProducts}
             go={go}
             withOrg={withOrg}
+            resumeUrl={resumeUrl}
           />
         )}
 
@@ -724,6 +730,7 @@ function AppsLayer({
   hiddenProducts,
   go,
   withOrg,
+  resumeUrl,
 }: {
   narrow: boolean
   close: () => void
@@ -736,6 +743,7 @@ function AppsLayer({
   hiddenProducts: boolean
   go: (href: string, e?: ReactMouseEvent) => void
   withOrg: (a: SuiteApp | undefined) => string | null
+  resumeUrl: (a: SuiteApp | undefined) => string | null
 }) {
   const accountUrl = withOrg(account)
   return (
@@ -750,7 +758,9 @@ function AppsLayer({
       <div className="sw-group">
         <div className="sw-group__title">Apps</div>
         {otherProducts.map((a) => {
-          const href = withOrg(a)!
+          // The app's front door with the organization as a hint, so it reopens
+          // where this person left off there instead of at the organization page.
+          const href = resumeUrl(a)!
           return (
             <ItemLink key={a.id} href={href} go={go}>
               <span className="sw-app">

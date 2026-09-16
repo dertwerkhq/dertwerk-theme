@@ -69,3 +69,23 @@ export function appOrgUrl(app, orgId) {
         return app.url + app.org_path.replace('{org_id}', encodeURIComponent(orgId));
     return app.url;
 }
+/** The query parameter carrying the organization to an app's front door. */
+export const ORG_HINT_PARAM = 'org';
+/**
+ * Where to send someone switching to another application: its front door,
+ * with the organization they were in as a hint. The app reopens their saved
+ * place in that organization, or opens the organization, rather than a link
+ * straight to the organization's page -- an address always wins over a saved
+ * place, so linking to a page would make switching apps forget where they were.
+ */
+export function appResumeUrl(app, orgId) {
+    if (!app.url)
+        return null;
+    if (orgId && app.org_path)
+        return `${app.url}/?${ORG_HINT_PARAM}=${encodeURIComponent(orgId)}`;
+    return app.url;
+}
+/** The organization hint on this page's address, if any. */
+export function orgHintFromLocation(search = typeof window !== 'undefined' ? window.location.search : '') {
+    return new URLSearchParams(search).get(ORG_HINT_PARAM);
+}
