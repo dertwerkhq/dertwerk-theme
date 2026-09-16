@@ -10,7 +10,16 @@
  * JavaScript uses to choose drawer and sheet over popovers.
  */
 
+/* The shell renders the appearance control, so it brings the control's
+   styles. An app that dropped its old header also dropped its only import of
+   this file, and the control fell back to that app's generic button styles. */
+@import "./themetoggle.css";
+
 .sw-shell {
+  /* The appearance control sits on shell surfaces here, whatever an app set
+     these to for a header it no longer has (FarmRx and FSAcre: white on green). */
+  --control-ink: var(--ink, #e5e7eb);
+  --control-ground: var(--surface, #222d3c);
   --sw-bar-h: 48px;
   --sw-side-w: 232px;
   display: flex;
@@ -410,9 +419,12 @@
 }
 
 .sw-item.is-current {
-  background: var(--accent-wash, rgb(54 124 43 / 0.2));
-  color: var(--accent-ink, var(--ink, #e5e7eb));
-  font-weight: 600;
+  /* A filled row plus an accent bar at its leading edge: the fill alone was
+     too faint to find at a glance. */
+  background: color-mix(in srgb, var(--accent, #367c2b) 30%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent-edge, var(--accent, #40916c));
+  color: var(--ink, #e5e7eb);
+  font-weight: 700;
 }
 
 .sw-item--quiet {
@@ -439,7 +451,12 @@
 }
 
 .sw-optrow.is-current {
-  background: var(--accent-wash, rgb(54 124 43 / 0.2));
+  background: color-mix(in srgb, var(--accent, #367c2b) 30%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent-edge, var(--accent, #40916c));
+}
+
+.sw-optrow.is-current > .sw-item {
+  box-shadow: none;
 }
 
 .sw-optrow.is-current > .sw-item {
