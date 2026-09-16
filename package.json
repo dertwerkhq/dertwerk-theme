@@ -1,6 +1,6 @@
 {
   "name": "@dertwerk/theme",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "Palette, light/dark, the appearance control, the branded sign-in screen, the in-app feedback control, and the suite navigation shell, shared by every DertWerk application.",
   "license": "UNLICENSED",
   "type": "module",
@@ -45,7 +45,11 @@
       "types": "./dist/access.d.ts",
       "default": "./dist/access.js"
     },
-    "./suite.css": "./dist/suite.css"
+    "./suite.css": "./dist/suite.css",
+    "./navMemory": {
+      "types": "./dist/navMemory.d.ts",
+      "default": "./dist/navMemory.js"
+    }
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node copy-css.mjs"
