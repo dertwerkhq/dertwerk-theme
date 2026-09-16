@@ -57,12 +57,26 @@ export interface LocationLevel {
     /** Keep it in the bar regardless -- e.g. the organization during a support
      *  session, where knowing whose data this is matters more than space. */
     alwaysShow?: boolean;
-    /** Links shown under the level: "Organization settings", "All organizations". */
+    /** Links about one choice, drawn as icons at the end of its row: that
+     *  organization's settings, its admin page. Per row, so the gear beside an
+     *  organization always means *that* organization's settings, however many
+     *  are listed. */
+    optionLinks?: (id: string) => LocationOptionLink[];
+    /** Links about the whole list, drawn as a footer under it: "All
+     *  organizations", "All farms". Never a choice-specific link -- those read as
+     *  one more choice when listed among the choices. */
     actions?: {
         key: string;
         label: string;
         href: string;
     }[];
+}
+export interface LocationOptionLink {
+    key: string;
+    /** Read by screen readers and shown as a tooltip, e.g. "Mewes Farms settings". */
+    label: string;
+    href: string;
+    icon: 'settings' | 'external';
 }
 export interface SuiteSession {
     email: string | null;
