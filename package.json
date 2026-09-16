@@ -1,6 +1,6 @@
 {
   "name": "@dertwerk/theme",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Palette, light/dark, the appearance control, the branded sign-in screen and the in-app feedback control, shared by every DertWerk application.",
   "license": "UNLICENSED",
   "type": "module",
