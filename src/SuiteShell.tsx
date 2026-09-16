@@ -498,7 +498,10 @@ export default function SuiteShell(props: SuiteShellProps) {
             close={close}
             triggerRef={appsTrigger}
             self={self}
-            nav={nav}
+            // With the sidebar on screen, the menu does not repeat it: it is the
+            // way to other applications. Without one (browse apps, and every app
+            // on a phone) it carries the app's destinations too.
+            nav={hasSidebar ? [] : nav}
             otherProducts={otherProducts}
             home={home}
             account={account}
