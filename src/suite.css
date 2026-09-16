@@ -218,6 +218,27 @@
   min-width: 0;
 }
 
+/* One screen tall; only the content scrolls. */
+.sw-shell--contained {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.sw-shell--contained .sw-bar {
+  position: relative;
+}
+
+.sw-shell--contained .sw-main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sw-shell--contained .sw-side {
+  position: static;
+  height: auto;
+}
+
 /* --- layers --------------------------------------------------------------- */
 
 .sw-pop {

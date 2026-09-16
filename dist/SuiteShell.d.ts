@@ -83,6 +83,10 @@ export interface SuiteShellProps {
     app: string;
     catalog: SuiteApp[];
     layout: 'browse' | 'workspace';
+    /** `window` (default): the page scrolls under a sticky bar. `contained`: the
+     *  shell is exactly one screen tall and only the content area scrolls --
+     *  for apps whose maps and editors size themselves to the space left. */
+    scroll?: 'window' | 'contained';
     /** Opens a path inside this app. Absolute URLs are opened by the shell. */
     navigate: (href: string) => void;
     /** Null when nobody is signed in. */
