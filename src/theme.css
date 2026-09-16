@@ -136,11 +136,17 @@
 
   --link: #f3b552;
 
-  --trace:         #c98a3c;
-  --trace-bright:  #f3b552;
-  --trace-dim:     #8a5e29;
-  --trace-outline: rgba(201, 138, 60, 0.35);
-  --trace-glow:    rgba(243, 181, 82, 0.55);
+  /* Metal, exactly as under Field. Board traces do NOT follow the palette:
+     a printed circuit board is etched metal whichever brand is on it, and
+     gold is reserved for the things that carry energy -- the pulses, the
+     halos, the chip silkscreen. Gold traces competed with the gold pulses
+     riding on them, and left Gold/Light showing gold and silver lines side
+     by side, because --trace-dim there was --soon. */
+  --trace:         #d6dade;
+  --trace-bright:  #f0f2f4;
+  --trace-dim:     #8c9197;
+  --trace-outline: #8c9197;
+  --trace-glow:    rgba(214, 218, 222, 0.4);
   --substrate-grid: rgba(190, 142, 70, 0.06);
   --silk-dim:      #9c978a;
 
@@ -183,11 +189,12 @@
 
   --link: #8a5e29;            /* 4.45:1 -- small text needs the dim gold */
 
-  --trace:         #c98a3c;
-  --trace-bright:  #d8a23a;
-  --trace-dim:     #6b6f63;   /* --soon: dormant traces read as unpowered */
-  --trace-outline: #6b6f63;
-  --trace-glow:    rgba(201, 138, 60, 0.35);
+  /* Metal, exactly as under Field/Light. See the Gold/Dark note above. */
+  --trace:         #8c9197;
+  --trace-bright:  #8c9197;
+  --trace-dim:     #bcc0c5;
+  --trace-outline: #bcc0c5;
+  --trace-glow:    rgba(140, 145, 151, 0.35);
   --substrate-grid: rgba(10, 12, 11, 0.06);
   --silk-dim:      #6b6f63;
 
