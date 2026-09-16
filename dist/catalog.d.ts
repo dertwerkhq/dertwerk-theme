@@ -23,3 +23,15 @@ export declare function appById(apps: SuiteApp[], id: string): SuiteApp | undefi
 /** The address of one organization inside an app, or the app's root when it
  *  has no organization pages. Null for an app that does not exist yet. */
 export declare function appOrgUrl(app: SuiteApp, orgId?: string | null): string | null;
+/** The query parameter carrying the organization to an app's front door. */
+export declare const ORG_HINT_PARAM = "org";
+/**
+ * Where to send someone switching to another application: its front door,
+ * with the organization they were in as a hint. The app reopens their saved
+ * place in that organization, or opens the organization, rather than a link
+ * straight to the organization's page -- an address always wins over a saved
+ * place, so linking to a page would make switching apps forget where they were.
+ */
+export declare function appResumeUrl(app: SuiteApp, orgId?: string | null): string | null;
+/** The organization hint on this page's address, if any. */
+export declare function orgHintFromLocation(search?: string): string | null;

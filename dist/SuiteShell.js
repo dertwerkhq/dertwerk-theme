@@ -187,6 +187,13 @@ export default function SuiteShell(props) {
         (entitledApps === null || entitledApps.includes(a.id) || a.public_browse));
     const hiddenProducts = entitledApps !== null &&
         catalog.some((a) => a.kind === 'product' && a.status !== 'soon' && a.request_access && !entitledApps.includes(a.id));
+    const resumeUrl = (a) => {
+        if (!a?.url)
+            return null;
+        if (orgId && a.org_path)
+            return `${a.url}/?org=${encodeURIComponent(orgId)}`;
+        return a.url;
+    };
     const withOrg = (a) => {
         if (!a?.url)
             return null;
@@ -226,7 +233,7 @@ export default function SuiteShell(props) {
                     // With the sidebar on screen, the menu does not repeat it: it is the
                     // way to other applications. Without one (browse apps, and every app
                     // on a phone) it carries the app's destinations too.
-                    nav: hasSidebar ? [] : nav, otherProducts: otherProducts, home: home, account: account, hiddenProducts: hiddenProducts, go: go, withOrg: withOrg })), typeof layer === 'object' && layer !== null && (_jsx(LocationLayer, { narrow: narrow, close: close, triggerRef: locationTrigger, levels: location, focusKey: layer.location, go: go })), layer === 'account' && session && (_jsx(AccountLayer, { narrow: narrow, close: close, triggerRef: accountTrigger, session: session, accountHref: session.isSuperadmin ? admin?.url ?? null : withOrg(account), accountLabel: session.isSuperadmin ? 'Admin' : 'Account', onAccountSite: app === 'account' || app === 'admin', theme: theme, onTheme: onTheme, persistTheme: persistTheme, feedbackEnabled: !!feedback?.enabled, openFeedback: () => {
+                    nav: hasSidebar ? [] : nav, otherProducts: otherProducts, home: home, account: account, hiddenProducts: hiddenProducts, go: go, withOrg: withOrg, resumeUrl: resumeUrl })), typeof layer === 'object' && layer !== null && (_jsx(LocationLayer, { narrow: narrow, close: close, triggerRef: locationTrigger, levels: location, focusKey: layer.location, go: go })), layer === 'account' && session && (_jsx(AccountLayer, { narrow: narrow, close: close, triggerRef: accountTrigger, session: session, accountHref: session.isSuperadmin ? admin?.url ?? null : withOrg(account), accountLabel: session.isSuperadmin ? 'Admin' : 'Account', onAccountSite: app === 'account' || app === 'admin', theme: theme, onTheme: onTheme, persistTheme: persistTheme, feedbackEnabled: !!feedback?.enabled, openFeedback: () => {
                         setLayer(null);
                         // The widget owns its dialog; open it through its own button.
                         feedbackHost.current?.querySelector('button')?.click();
@@ -272,10 +279,12 @@ function groupItems(items) {
 export function SideNav({ items, go, }) {
     return (_jsx("div", { className: "sw-nav", children: groupItems(items).map(([group, its]) => (_jsxs("div", { className: "sw-group", children: [group && _jsx("div", { className: "sw-group__title", children: group }), its.map((it) => (_jsx(ItemLink, { href: it.href, go: go, current: it.current, badge: it.badge, children: it.label }, it.key)))] }, group ?? '_'))) }));
 }
-function AppsLayer({ narrow, close, triggerRef, self, nav, otherProducts, home, account, hiddenProducts, go, withOrg, }) {
+function AppsLayer({ narrow, close, triggerRef, self, nav, otherProducts, home, account, hiddenProducts, go, withOrg, resumeUrl, }) {
     const accountUrl = withOrg(account);
     return (_jsxs(Layer, { narrow: narrow, side: "drawer", align: "start", label: "Menu", close: close, triggerRef: triggerRef, children: [nav.length > 0 && (_jsxs(_Fragment, { children: [narrow && _jsx("div", { className: "sw-group__title sw-group__title--app", children: self?.name }), _jsx(SideNav, { items: nav, go: go }), _jsx("div", { className: "sw-rule" })] })), _jsxs("div", { className: "sw-group", children: [_jsx("div", { className: "sw-group__title", children: "Apps" }), otherProducts.map((a) => {
-                        const href = withOrg(a);
+                        // The app's front door with the organization as a hint, so it reopens
+                        // where this person left off there instead of at the organization page.
+                        const href = resumeUrl(a);
                         return (_jsx(ItemLink, { href: href, go: go, children: _jsxs("span", { className: "sw-app", children: [_jsx("span", { className: "sw-app__name", children: a.name }), _jsx("span", { className: "sw-app__tag", children: a.tagline })] }) }, a.id));
                     }), home?.url && self?.id !== home.id && (_jsx(ItemLink, { href: home.url, go: go, children: "DertWerk Home" })), hiddenProducts && accountUrl && (_jsx(ItemLink, { href: accountUrl, go: go, children: _jsx("span", { className: "sw-item__more", children: "Get More Apps" }) }))] })] }));
 }
