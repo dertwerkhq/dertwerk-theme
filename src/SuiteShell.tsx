@@ -227,6 +227,7 @@ function useLayer(
     if (!open) return
     const trigger = triggerRef.current
     const panel = panelRef.current
+    let closedByKeyboard = false
     const first =
       panel?.querySelector<HTMLElement>('[data-autofocus]') ?? panel?.querySelector<HTMLElement>(FOCUSABLE)
     first?.focus()
@@ -234,6 +235,7 @@ function useLayer(
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation()
+        closedByKeyboard = true
         close()
         return
       }
@@ -263,8 +265,11 @@ function useLayer(
       document.removeEventListener('mousedown', onDown)
       // Only pull focus back if it is still inside the layer being closed;
       // a click that moved focus somewhere on purpose keeps it there.
+      // Returned without a focus ring unless the layer was closed from the
+      // keyboard: after picking a field with the mouse, a ring around the bar
+      // segment reads as something still selected.
       if (!document.activeElement || document.activeElement === document.body || panel?.contains(document.activeElement)) {
-        trigger?.focus()
+        trigger?.focus({ focusVisible: closedByKeyboard } as FocusOptions)
       }
     }
   }, [open, close, panelRef, triggerRef, modal])
@@ -408,12 +413,10 @@ export default function SuiteShell(props: SuiteShellProps) {
 
   // With nothing to switch to, the bar still names the place: the two deepest
   // levels, e.g. "Mewes Farms, Inc. / 2026".
-  const staticPlace =
-    location
-      .filter((l) => l.current)
-      .slice(-2)
-      .map((l) => l.current!.label)
-      .join(' / ') || null
+  const staticPlace = location
+    .filter((l) => l.current)
+    .slice(-2)
+    .map((l) => ({ key: l.key, label: l.current!.label }))
 
   const breadcrumb =
     feedback?.breadcrumb ?? (location.map((l) => l.current?.label).filter(Boolean).join(' › ') || null)
@@ -457,13 +460,21 @@ export default function SuiteShell(props: SuiteShellProps) {
           </button>
 
           <nav className="sw-bar__location" aria-label="Location">
-            {barLevels.length === 0 && staticPlace && (
+            {barLevels.length === 0 &&
               // Nothing to switch to at any level: say where this is, without
-              // a control that opens a menu with no choices in it.
-              <span className="sw-seg sw-seg--current sw-seg--static">
-                <span className="sw-seg__text">{staticPlace}</span>
-              </span>
-            )}
+              // a control that opens a menu with no choices in it. One segment
+              // per level, like the switchable ones, so a narrow bar gives up
+              // the organization's name before the farm's.
+              staticPlace.map((p, i) => (
+                <span key={p.key} className="sw-seg-wrap">
+                  {i > 0 && <span className="sw-seg-sep" aria-hidden="true">/</span>}
+                  <span
+                    className={`sw-seg sw-seg--static${i === staticPlace.length - 1 ? ' sw-seg--current' : ''}`}
+                  >
+                    <span className="sw-seg__text">{p.label}</span>
+                  </span>
+                </span>
+              ))}
             {barLevels.map((lvl, i) => (
               <span key={lvl.key} className="sw-seg-wrap">
                 {i > 0 && <span className="sw-seg-sep" aria-hidden="true">/</span>}

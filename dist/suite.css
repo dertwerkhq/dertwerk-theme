@@ -506,6 +506,12 @@
   cursor: default;
 }
 
+/* The deepest static segment keeps its full name while there is room; the
+   segments above it shrink first. */
+.sw-seg--static .sw-seg__text {
+  max-width: none;
+}
+
 .sw-seg--static:hover {
   background: transparent;
   border-color: transparent;
@@ -688,6 +694,12 @@
 
   /* On a phone the bar shows only the deepest place; the sheet has the rest. */
   .sw-seg-wrap:not(:last-child) {
+    display: none;
+  }
+
+  /* ...and with the levels before it hidden, its separator has nothing to
+     separate. */
+  .sw-seg-wrap:last-child .sw-seg-sep {
     display: none;
   }
 

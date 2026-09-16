@@ -85,11 +85,13 @@ function useLayer(open, close, panelRef, triggerRef, modal) {
             return;
         const trigger = triggerRef.current;
         const panel = panelRef.current;
+        let closedByKeyboard = false;
         const first = panel?.querySelector('[data-autofocus]') ?? panel?.querySelector(FOCUSABLE);
         first?.focus();
         const onKey = (e) => {
             if (e.key === 'Escape') {
                 e.stopPropagation();
+                closedByKeyboard = true;
                 close();
                 return;
             }
@@ -122,8 +124,11 @@ function useLayer(open, close, panelRef, triggerRef, modal) {
             document.removeEventListener('mousedown', onDown);
             // Only pull focus back if it is still inside the layer being closed;
             // a click that moved focus somewhere on purpose keeps it there.
+            // Returned without a focus ring unless the layer was closed from the
+            // keyboard: after picking a field with the mouse, a ring around the bar
+            // segment reads as something still selected.
             if (!document.activeElement || document.activeElement === document.body || panel?.contains(document.activeElement)) {
-                trigger?.focus();
+                trigger?.focus({ focusVisible: closedByKeyboard });
             }
         };
     }, [open, close, panelRef, triggerRef, modal]);
@@ -218,15 +223,19 @@ export default function SuiteShell(props) {
     const staticPlace = location
         .filter((l) => l.current)
         .slice(-2)
-        .map((l) => l.current.label)
-        .join(' / ') || null;
+        .map((l) => ({ key: l.key, label: l.current.label }));
     const breadcrumb = feedback?.breadcrumb ?? (location.map((l) => l.current?.label).filter(Boolean).join(' › ') || null);
     const appsTrigger = useRef(null);
     const accountTrigger = useRef(null);
     const locationTrigger = useRef(null);
     const feedbackHost = useRef(null);
     const hasSidebar = layout === 'workspace' && nav.length > 0 && !narrow;
-    return (_jsx(GuardContext.Provider, { value: guardApi, children: _jsxs("div", { className: `sw-shell sw-shell--${layout}${scroll === 'contained' ? ' sw-shell--contained' : ''}${hasSidebar ? ' sw-shell--sidebar' : ''}`, children: [_jsxs("header", { className: "sw-bar", children: [_jsx("button", { ref: appsTrigger, type: "button", className: `sw-bar__apps${layer === 'apps' ? ' is-open' : ''}`, "aria-expanded": layer === 'apps', "aria-haspopup": "dialog", "aria-label": narrow ? 'Menu' : `${self?.name ?? app} menu`, onClick: () => setLayer(layer === 'apps' ? null : 'apps'), children: narrow ? (_jsxs(_Fragment, { children: [Icon.menu, _jsx("span", { className: "sw-bar__menu-label", children: "Menu" })] })) : (_jsxs(_Fragment, { children: [Icon.grid, _jsx("span", { className: "sw-bar__name", children: self?.name ?? app }), Icon.chevron] })) }), _jsxs("nav", { className: "sw-bar__location", "aria-label": "Location", children: [barLevels.length === 0 && staticPlace && (_jsx("span", { className: "sw-seg sw-seg--current sw-seg--static", children: _jsx("span", { className: "sw-seg__text", children: staticPlace }) })), barLevels.map((lvl, i) => (_jsxs("span", { className: "sw-seg-wrap", children: [i > 0 && _jsx("span", { className: "sw-seg-sep", "aria-hidden": "true", children: "/" }), _jsxs("button", { type: "button", className: `sw-seg${i === barLevels.length - 1 ? ' sw-seg--current' : ''}${typeof layer === 'object' && layer?.location === lvl.key ? ' is-open' : ''}`, "aria-haspopup": "dialog", "aria-expanded": typeof layer === 'object' && layer?.location === lvl.key, "aria-label": `${lvl.label}: ${lvl.current.label}. Change`, onClick: (e) => {
+    return (_jsx(GuardContext.Provider, { value: guardApi, children: _jsxs("div", { className: `sw-shell sw-shell--${layout}${scroll === 'contained' ? ' sw-shell--contained' : ''}${hasSidebar ? ' sw-shell--sidebar' : ''}`, children: [_jsxs("header", { className: "sw-bar", children: [_jsx("button", { ref: appsTrigger, type: "button", className: `sw-bar__apps${layer === 'apps' ? ' is-open' : ''}`, "aria-expanded": layer === 'apps', "aria-haspopup": "dialog", "aria-label": narrow ? 'Menu' : `${self?.name ?? app} menu`, onClick: () => setLayer(layer === 'apps' ? null : 'apps'), children: narrow ? (_jsxs(_Fragment, { children: [Icon.menu, _jsx("span", { className: "sw-bar__menu-label", children: "Menu" })] })) : (_jsxs(_Fragment, { children: [Icon.grid, _jsx("span", { className: "sw-bar__name", children: self?.name ?? app }), Icon.chevron] })) }), _jsxs("nav", { className: "sw-bar__location", "aria-label": "Location", children: [barLevels.length === 0 &&
+                                    // Nothing to switch to at any level: say where this is, without
+                                    // a control that opens a menu with no choices in it. One segment
+                                    // per level, like the switchable ones, so a narrow bar gives up
+                                    // the organization's name before the farm's.
+                                    staticPlace.map((p, i) => (_jsxs("span", { className: "sw-seg-wrap", children: [i > 0 && _jsx("span", { className: "sw-seg-sep", "aria-hidden": "true", children: "/" }), _jsx("span", { className: `sw-seg sw-seg--static${i === staticPlace.length - 1 ? ' sw-seg--current' : ''}`, children: _jsx("span", { className: "sw-seg__text", children: p.label }) })] }, p.key))), barLevels.map((lvl, i) => (_jsxs("span", { className: "sw-seg-wrap", children: [i > 0 && _jsx("span", { className: "sw-seg-sep", "aria-hidden": "true", children: "/" }), _jsxs("button", { type: "button", className: `sw-seg${i === barLevels.length - 1 ? ' sw-seg--current' : ''}${typeof layer === 'object' && layer?.location === lvl.key ? ' is-open' : ''}`, "aria-haspopup": "dialog", "aria-expanded": typeof layer === 'object' && layer?.location === lvl.key, "aria-label": `${lvl.label}: ${lvl.current.label}. Change`, onClick: (e) => {
                                                 locationTrigger.current = e.currentTarget;
                                                 setLayer(typeof layer === 'object' && layer?.location === lvl.key ? null : { location: lvl.key });
                                             }, children: [_jsx("span", { className: "sw-seg__text", children: lvl.current.label }), Icon.chevron] })] }, lvl.key)))] }), _jsx("div", { className: "sw-bar__you", children: session ? (_jsx("button", { ref: accountTrigger, type: "button", className: `sw-avatar${layer === 'account' ? ' is-open' : ''}`, "aria-haspopup": "dialog", "aria-expanded": layer === 'account', "aria-label": `Account menu${session.email ? ` for ${session.email}` : ''}`, onClick: () => setLayer(layer === 'account' ? null : 'account'), children: initials(session.email) })) : (_jsxs(_Fragment, { children: [_jsx(ThemeToggle, { value: theme, onChange: onTheme, persist: persistTheme, compact: true }), onSignIn && (_jsx("button", { type: "button", className: "sw-btn sw-btn--primary", onClick: onSignIn, children: "Sign In" }))] })) })] }), layer === 'apps' && (_jsx(AppsLayer, { narrow: narrow, close: close, triggerRef: appsTrigger, self: self, 
