@@ -118,7 +118,7 @@ export const CATALOG_SNAPSHOT = [
         "url": "https://account.dertwerk.com",
         "public_browse": false,
         "request_access": false,
-        "org_path": null
+        "org_path": "/orgs/{org_id}/apps"
     },
     {
         "id": "admin",
