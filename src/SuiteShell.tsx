@@ -391,11 +391,12 @@ export default function SuiteShell(props: SuiteShellProps) {
   }
 
   // --- location, as the bar shows it ------------------------------------
-  const barLevels = location.filter((lvl, i) => {
+  // A level with one choice has nothing to switch to, so it stays out of the
+  // bar -- including the deepest level. Showing the only organization on a
+  // page that is nothing but that organization's home just repeats it.
+  const barLevels = location.filter((lvl) => {
     if (!lvl.current) return false
     if (lvl.alwaysShow) return true
-    const deepest = location.slice(i + 1).every((l) => !l.current)
-    if (deepest) return true
     const count = lvl.count ?? lvl.options?.length
     return !((lvl.hideWhenSingle ?? true) && count === 1)
   })

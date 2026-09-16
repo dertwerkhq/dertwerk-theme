@@ -11,8 +11,10 @@ Three slots, and it takes no children:
 1. **App menu.** This app's destinations (`nav`), then the other apps the
    person can open, DertWerk home, and "Get more apps".
 2. **Location.** One segment per level (`location`). A level with a single
-   choice is left out of the bar and stays in the switcher. The deepest level
-   is always shown.
+   choice is left out of the bar, at any depth, and stays in the switcher
+   (`alwaysShow` overrides this, e.g. for support sessions). The bar may show no
+   location at all. Links about one choice (its settings) go in `optionLinks`,
+   as icons on that choice's row. Links about the whole list go in `actions`.
 3. **You.** The account menu: email, Appearance, Send feedback, Account or
    Admin, Sign out. Signed out: Sign in plus a compact appearance control.
 
@@ -21,7 +23,7 @@ Three slots, and it takes no children:
 | it is about | it goes in |
 | --- | --- |
 | the person | the account menu (or the account site's "You" section) |
-| the organization | that app's organization settings, reached from `nav` and the location switcher |
+| the organization | that app's organization settings, reached from `nav` and the gear on the organization's row in the location switcher |
 | the app | `nav` |
 | one page | that page's own header |
 | none of these | ask before adding it anywhere |
