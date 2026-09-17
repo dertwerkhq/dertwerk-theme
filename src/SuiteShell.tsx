@@ -35,6 +35,7 @@ import FeedbackWidget from './FeedbackWidget'
 import ThemeToggle from './ThemeToggle'
 import type { FeedbackApp, FeedbackReport } from './feedback'
 import type { SuiteApp } from './catalog'
+import { flushNavMemory } from './navMemory'
 import type { ThemeChoice } from './theme'
 
 /* ------------------------------------------------------------------------ */
@@ -366,8 +367,11 @@ export default function SuiteShell(props: SuiteShellProps) {
       e?.preventDefault()
       if (!guardApi.confirmLeave()) return
       setLayer(null)
-      if (/^https?:\/\//.test(href)) window.location.assign(href)
-      else navigate(href)
+      if (/^https?:\/\//.test(href)) {
+        // Leaving for another app: save where this person is first, or the
+        // page they were just on is lost when this one unloads.
+        void flushNavMemory().then(() => window.location.assign(href))
+      } else navigate(href)
     },
     [guardApi, navigate],
   )

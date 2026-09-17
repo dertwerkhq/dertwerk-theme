@@ -21,6 +21,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 import { createContext, useCallback, useContext, useEffect, useId, useMemo, useRef, useState, } from 'react';
 import FeedbackWidget from './FeedbackWidget';
 import ThemeToggle from './ThemeToggle';
+import { flushNavMemory } from './navMemory';
 const GuardContext = createContext(null);
 const DEFAULT_UNSAVED = 'You have unsaved changes. Leave this page and lose them?';
 /**
@@ -175,8 +176,11 @@ export default function SuiteShell(props) {
         if (!guardApi.confirmLeave())
             return;
         setLayer(null);
-        if (/^https?:\/\//.test(href))
-            window.location.assign(href);
+        if (/^https?:\/\//.test(href)) {
+            // Leaving for another app: save where this person is first, or the
+            // page they were just on is lost when this one unloads.
+            void flushNavMemory().then(() => window.location.assign(href));
+        }
         else
             navigate(href);
     }, [guardApi, navigate]);

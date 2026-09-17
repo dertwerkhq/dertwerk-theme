@@ -21,8 +21,31 @@
  * carried a `nav_state` field at all.
  */
 import { useEffect, useRef } from 'react';
-const MIN_INTERVAL_MS = 10_000;
-const SETTLE_MS = 1_500;
+// Short, because a place only counts if it is saved before the person leaves
+// the app, and switching apps is a full page load that cancels any timer.
+// Ten seconds lost every page visited just before switching.
+const MIN_INTERVAL_MS = 3_000;
+const SETTLE_MS = 800;
+// How long leaving an app will wait for the last save to go out.
+const FLUSH_TIMEOUT_MS = 1_500;
+/** The save waiting on its timer, across every useNavMemory on the page. */
+let pending = null;
+/**
+ * Send the waiting save now. Call before leaving the page for another app --
+ * the shell does, for its own app links. Resolves when the save is done or
+ * after a short wait, whichever comes first, so leaving is never held up long.
+ */
+export function flushNavMemory() {
+    if (!pending)
+        return Promise.resolve();
+    const { timer, send } = pending;
+    clearTimeout(timer);
+    pending = null;
+    return Promise.race([
+        send().then(() => undefined, () => undefined),
+        new Promise((resolve) => setTimeout(resolve, FLUSH_TIMEOUT_MS)),
+    ]);
+}
 export function useNavMemory({ app, destination, enabled, save, }) {
     const lastWritten = useRef(null);
     const timer = useRef(null);
@@ -48,19 +71,26 @@ export function useNavMemory({ app, destination, enabled, save, }) {
         const wait = Math.max(SETTLE_MS, MIN_INTERVAL_MS - since);
         if (timer.current)
             clearTimeout(timer.current);
+        const send = () => {
+            lastWritten.current = { path: body.path, at: Date.now() };
+            return saveRef.current(app, body).catch(() => {
+                // Not worth a message: the worst case is reopening one step behind.
+            });
+        };
         // Trailing: a newer place replaces the pending one, and whichever is
         // current when the timer fires is the one recorded.
         timer.current = setTimeout(() => {
             timer.current = null;
-            lastWritten.current = { path: body.path, at: Date.now() };
-            void saveRef.current(app, body).catch(() => {
-                // Not worth a message: the worst case is reopening one step behind.
-            });
+            pending = null;
+            void send();
         }, wait);
+        pending = { timer: timer.current, send };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [app, enabled, key]);
     useEffect(() => () => {
-        if (timer.current)
+        // Unmounting inside the app (a route change) cancels nothing: the next
+        // page's place replaces it anyway. Only an un-flushed page unload loses it.
+        if (timer.current && pending?.timer !== timer.current)
             clearTimeout(timer.current);
     }, []);
 }
