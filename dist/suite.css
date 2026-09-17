@@ -238,6 +238,55 @@
   color: var(--on-accent, #fff) !important;
 }
 
+/* --- app marks ------------------------------------------------------------ */
+/* Each app's name as its brand draws it. The dark-mode colours are the
+   board's; light mode darkens them to stay legible on a white surface. */
+.sw-shell {
+  --sw-mark-green: #7cc24f;
+  --sw-mark-blue: #4f9fe8;
+  --sw-mark-metal: linear-gradient(180deg, #f0f2f4 0%, #b7bcc2 55%, #8c9197 100%);
+}
+
+:root.theme-light .sw-shell {
+  --sw-mark-green: #3b8a24;
+  --sw-mark-blue: #1f6cc0;
+  --sw-mark-metal: linear-gradient(180deg, #6b7178 0%, #3f444a 60%, #2a2e33 100%);
+}
+
+.sw-mark {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.sw-mark__green { color: var(--sw-mark-green); }
+.sw-mark__blue { color: var(--sw-mark-blue); }
+
+/* FSAcre's A is split down the middle, so the name reads FSA + Acre. */
+.sw-mark__split {
+  background: linear-gradient(90deg, var(--sw-mark-green) 50%, var(--sw-mark-blue) 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sw-mark--metal {
+  background: var(--sw-mark-metal);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sw-mark__icon {
+  width: 1.15em;
+  height: 1.15em;
+  margin-right: 0.35em;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 /* --- body ----------------------------------------------------------------- */
 
 .sw-body {

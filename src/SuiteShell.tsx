@@ -314,6 +314,44 @@ function initials(email: string | null): string {
   return s.toUpperCase()
 }
 
+/**
+ * An application's name the way its brand draws it -- the same marks the
+ * dertwerk.com board uses -- wherever the shell names an app. Plain text for
+ * an app without one, and the name is always the accessible label.
+ */
+const AGPLICATION_ICON = 'https://agplication.dertwerk.com/assets/agplication_icon_circle.png'
+
+function AppName({ id, name }: { id: string; name: string }) {
+  switch (id) {
+    case 'farmrx':
+      return (
+        <span className="sw-mark sw-mark--farmrx" aria-label={name}>
+          <span className="sw-mark__green" aria-hidden="true">Farm</span>
+          <span className="sw-mark__blue" aria-hidden="true">Rx</span>
+        </span>
+      )
+    case 'fsacre':
+      return (
+        <span className="sw-mark sw-mark--fsacre" aria-label={name}>
+          <span className="sw-mark__green" aria-hidden="true">FS</span>
+          <span className="sw-mark__split" aria-hidden="true">A</span>
+          <span className="sw-mark__blue" aria-hidden="true">cre</span>
+        </span>
+      )
+    case 'agplication':
+      return (
+        <span className="sw-mark sw-mark--agplication">
+          <img className="sw-mark__icon" src={AGPLICATION_ICON} alt="" aria-hidden="true" />
+          {name}
+        </span>
+      )
+    case 'machinery':
+      return <span className="sw-mark sw-mark--metal">{name}</span>
+    default:
+      return <>{name}</>
+  }
+}
+
 /* ------------------------------------------------------------------------ */
 /* The shell                                                                 */
 /* ------------------------------------------------------------------------ */
@@ -457,7 +495,9 @@ export default function SuiteShell(props: SuiteShellProps) {
             ) : (
               <>
                 {Icon.grid}
-                <span className="sw-bar__name">{self?.name ?? app}</span>
+                <span className="sw-bar__name">
+                  <AppName id={app} name={self?.name ?? app} />
+                </span>
                 {Icon.chevron}
               </>
             )}
@@ -765,7 +805,11 @@ function AppsLayer({
     <Layer narrow={narrow} side="drawer" align="start" label="Menu" close={close} triggerRef={triggerRef}>
       {nav.length > 0 && (
         <>
-          {narrow && <div className="sw-group__title sw-group__title--app">{self?.name}</div>}
+          {narrow && self && (
+            <div className="sw-group__title sw-group__title--app">
+              <AppName id={self.id} name={self.name} />
+            </div>
+          )}
           <SideNav items={nav} go={go} />
           <div className="sw-rule" />
         </>
@@ -779,7 +823,9 @@ function AppsLayer({
           return (
             <ItemLink key={a.id} href={href} go={go}>
               <span className="sw-app">
-                <span className="sw-app__name">{a.name}</span>
+                <span className="sw-app__name">
+                  <AppName id={a.id} name={a.name} />
+                </span>
                 <span className="sw-app__tag">{a.tagline}</span>
               </span>
             </ItemLink>
