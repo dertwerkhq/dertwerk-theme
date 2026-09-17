@@ -621,6 +621,25 @@
   font-weight: 600;
 }
 
+/* The logo file is 1536x1024 with the mark at x 161-1324, y 263-655 and
+   transparent space around it. Cropped to the mark: a 78x26 window onto the
+   image scaled by 26/392. */
+.sw-app__logo {
+  display: block;
+  width: 77px;
+  height: 26px;
+  overflow: hidden;
+  margin: 1px 0 3px;
+}
+
+.sw-app__logo img {
+  display: block;
+  max-width: none;
+  width: 101.9px;
+  height: 67.9px;
+  margin: -17.4px 0 0 -10.7px;
+}
+
 .sw-app__tag {
   font-size: 0.78rem;
   color: var(--ink-subtle, #9ca3af);
