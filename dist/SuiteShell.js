@@ -149,6 +149,26 @@ function initials(email) {
     const s = parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2);
     return s.toUpperCase();
 }
+/**
+ * An application's name the way its brand draws it -- the same marks the
+ * dertwerk.com board uses -- wherever the shell names an app. Plain text for
+ * an app without one, and the name is always the accessible label.
+ */
+const AGPLICATION_ICON = 'https://agplication.dertwerk.com/assets/agplication_icon_circle.png';
+function AppName({ id, name }) {
+    switch (id) {
+        case 'farmrx':
+            return (_jsxs("span", { className: "sw-mark sw-mark--farmrx", "aria-label": name, children: [_jsx("span", { className: "sw-mark__green", "aria-hidden": "true", children: "Farm" }), _jsx("span", { className: "sw-mark__blue", "aria-hidden": "true", children: "Rx" })] }));
+        case 'fsacre':
+            return (_jsxs("span", { className: "sw-mark sw-mark--fsacre", "aria-label": name, children: [_jsx("span", { className: "sw-mark__green", "aria-hidden": "true", children: "FS" }), _jsx("span", { className: "sw-mark__split", "aria-hidden": "true", children: "A" }), _jsx("span", { className: "sw-mark__blue", "aria-hidden": "true", children: "cre" })] }));
+        case 'agplication':
+            return (_jsxs("span", { className: "sw-mark sw-mark--agplication", children: [_jsx("img", { className: "sw-mark__icon", src: AGPLICATION_ICON, alt: "", "aria-hidden": "true" }), name] }));
+        case 'machinery':
+            return _jsx("span", { className: "sw-mark sw-mark--metal", children: name });
+        default:
+            return _jsx(_Fragment, { children: name });
+    }
+}
 export default function SuiteShell(props) {
     const { app, catalog, layout, scroll = 'window', navigate, session, onSignIn, entitledApps, orgId = null, nav = [], location = [], theme, onTheme, persistTheme, feedback, children, } = props;
     const narrow = useNarrow();
@@ -234,7 +254,7 @@ export default function SuiteShell(props) {
     const locationTrigger = useRef(null);
     const feedbackHost = useRef(null);
     const hasSidebar = layout === 'workspace' && nav.length > 0 && !narrow;
-    return (_jsx(GuardContext.Provider, { value: guardApi, children: _jsxs("div", { className: `sw-shell sw-shell--${layout}${scroll === 'contained' ? ' sw-shell--contained' : ''}${hasSidebar ? ' sw-shell--sidebar' : ''}`, children: [_jsxs("header", { className: "sw-bar", children: [_jsx("button", { ref: appsTrigger, type: "button", className: `sw-bar__apps${layer === 'apps' ? ' is-open' : ''}`, "aria-expanded": layer === 'apps', "aria-haspopup": "dialog", "aria-label": narrow ? 'Menu' : `${self?.name ?? app} menu`, onClick: () => setLayer(layer === 'apps' ? null : 'apps'), children: narrow ? (_jsxs(_Fragment, { children: [Icon.menu, _jsx("span", { className: "sw-bar__menu-label", children: "Menu" })] })) : (_jsxs(_Fragment, { children: [Icon.grid, _jsx("span", { className: "sw-bar__name", children: self?.name ?? app }), Icon.chevron] })) }), _jsxs("nav", { className: "sw-bar__location", "aria-label": "Location", children: [barLevels.length === 0 &&
+    return (_jsx(GuardContext.Provider, { value: guardApi, children: _jsxs("div", { className: `sw-shell sw-shell--${layout}${scroll === 'contained' ? ' sw-shell--contained' : ''}${hasSidebar ? ' sw-shell--sidebar' : ''}`, children: [_jsxs("header", { className: "sw-bar", children: [_jsx("button", { ref: appsTrigger, type: "button", className: `sw-bar__apps${layer === 'apps' ? ' is-open' : ''}`, "aria-expanded": layer === 'apps', "aria-haspopup": "dialog", "aria-label": narrow ? 'Menu' : `${self?.name ?? app} menu`, onClick: () => setLayer(layer === 'apps' ? null : 'apps'), children: narrow ? (_jsxs(_Fragment, { children: [Icon.menu, _jsx("span", { className: "sw-bar__menu-label", children: "Menu" })] })) : (_jsxs(_Fragment, { children: [Icon.grid, _jsx("span", { className: "sw-bar__name", children: _jsx(AppName, { id: app, name: self?.name ?? app }) }), Icon.chevron] })) }), _jsxs("nav", { className: "sw-bar__location", "aria-label": "Location", children: [barLevels.length === 0 &&
                                     // Nothing to switch to at any level: say where this is, without
                                     // a control that opens a menu with no choices in it. One segment
                                     // per level, like the switchable ones, so a narrow bar gives up
@@ -294,11 +314,11 @@ export function SideNav({ items, go, }) {
 }
 function AppsLayer({ narrow, close, triggerRef, self, nav, otherProducts, home, account, hiddenProducts, go, withOrg, resumeUrl, }) {
     const accountUrl = withOrg(account);
-    return (_jsxs(Layer, { narrow: narrow, side: "drawer", align: "start", label: "Menu", close: close, triggerRef: triggerRef, children: [nav.length > 0 && (_jsxs(_Fragment, { children: [narrow && _jsx("div", { className: "sw-group__title sw-group__title--app", children: self?.name }), _jsx(SideNav, { items: nav, go: go }), _jsx("div", { className: "sw-rule" })] })), _jsxs("div", { className: "sw-group", children: [_jsx("div", { className: "sw-group__title", children: "Apps" }), otherProducts.map((a) => {
+    return (_jsxs(Layer, { narrow: narrow, side: "drawer", align: "start", label: "Menu", close: close, triggerRef: triggerRef, children: [nav.length > 0 && (_jsxs(_Fragment, { children: [narrow && self && (_jsx("div", { className: "sw-group__title sw-group__title--app", children: _jsx(AppName, { id: self.id, name: self.name }) })), _jsx(SideNav, { items: nav, go: go }), _jsx("div", { className: "sw-rule" })] })), _jsxs("div", { className: "sw-group", children: [_jsx("div", { className: "sw-group__title", children: "Apps" }), otherProducts.map((a) => {
                         // The app's front door with the organization as a hint, so it reopens
                         // where this person left off there instead of at the organization page.
                         const href = resumeUrl(a);
-                        return (_jsx(ItemLink, { href: href, go: go, children: _jsxs("span", { className: "sw-app", children: [_jsx("span", { className: "sw-app__name", children: a.name }), _jsx("span", { className: "sw-app__tag", children: a.tagline })] }) }, a.id));
+                        return (_jsx(ItemLink, { href: href, go: go, children: _jsxs("span", { className: "sw-app", children: [_jsx("span", { className: "sw-app__name", children: _jsx(AppName, { id: a.id, name: a.name }) }), _jsx("span", { className: "sw-app__tag", children: a.tagline })] }) }, a.id));
                     }), home?.url && self?.id !== home.id && (_jsx(ItemLink, { href: home.url, go: go, children: "DertWerk Home" })), hiddenProducts && accountUrl && (_jsx(ItemLink, { href: accountUrl, go: go, children: _jsx("span", { className: "sw-item__more", children: "Get More Apps" }) }))] })] }));
 }
 function LocationLayer({ narrow, close, triggerRef, levels, focusKey, go, }) {
