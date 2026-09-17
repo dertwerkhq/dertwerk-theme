@@ -25,6 +25,12 @@ export interface NavStateBody {
     client_ts: string;
     work: boolean;
 }
+/**
+ * Send the waiting save now. Call before leaving the page for another app --
+ * the shell does, for its own app links. Resolves when the save is done or
+ * after a short wait, whichever comes first, so leaving is never held up long.
+ */
+export declare function flushNavMemory(): Promise<void>;
 export declare function useNavMemory({ app, destination, enabled, save, }: {
     app: string;
     destination: NavDestination | null;
