@@ -319,6 +319,7 @@ function initials(email: string | null): string {
  * dertwerk.com board uses -- wherever the shell names an app. Plain text for
  * an app without one, and the name is always the accessible label.
  */
+const DERTWERK_LOGO = 'https://www.dertwerk.com/brand/dertwerk-logo.png'
 const AGPLICATION_ICON = 'https://agplication.dertwerk.com/assets/agplication_icon_circle.png'
 
 function AppName({ id, name }: { id: string; name: string }) {
@@ -832,8 +833,15 @@ function AppsLayer({
           )
         })}
         {home?.url && self?.id !== home.id && (
+          // The DertWerk logo, laid out like the app rows above it: the mark
+          // where the name goes, and what it opens where the tagline goes.
           <ItemLink href={home.url} go={go}>
-            DertWerk Home
+            <span className="sw-app" aria-label="DertWerk Home">
+              <span className="sw-app__logo" aria-hidden="true">
+                <img src={DERTWERK_LOGO} alt="" />
+              </span>
+              <span className="sw-app__tag" aria-hidden="true">All DertWerk Applications</span>
+            </span>
           </ItemLink>
         )}
         {hiddenProducts && accountUrl && (

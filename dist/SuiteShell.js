@@ -154,6 +154,7 @@ function initials(email) {
  * dertwerk.com board uses -- wherever the shell names an app. Plain text for
  * an app without one, and the name is always the accessible label.
  */
+const DERTWERK_LOGO = 'https://www.dertwerk.com/brand/dertwerk-logo.png';
 const AGPLICATION_ICON = 'https://agplication.dertwerk.com/assets/agplication_icon_circle.png';
 function AppName({ id, name }) {
     switch (id) {
@@ -319,7 +320,7 @@ function AppsLayer({ narrow, close, triggerRef, self, nav, otherProducts, home, 
                         // where this person left off there instead of at the organization page.
                         const href = resumeUrl(a);
                         return (_jsx(ItemLink, { href: href, go: go, children: _jsxs("span", { className: "sw-app", children: [_jsx("span", { className: "sw-app__name", children: _jsx(AppName, { id: a.id, name: a.name }) }), _jsx("span", { className: "sw-app__tag", children: a.tagline })] }) }, a.id));
-                    }), home?.url && self?.id !== home.id && (_jsx(ItemLink, { href: home.url, go: go, children: "DertWerk Home" })), hiddenProducts && accountUrl && (_jsx(ItemLink, { href: accountUrl, go: go, children: _jsx("span", { className: "sw-item__more", children: "Get More Apps" }) }))] })] }));
+                    }), home?.url && self?.id !== home.id && (_jsx(ItemLink, { href: home.url, go: go, children: _jsxs("span", { className: "sw-app", "aria-label": "DertWerk Home", children: [_jsx("span", { className: "sw-app__logo", "aria-hidden": "true", children: _jsx("img", { src: DERTWERK_LOGO, alt: "" }) }), _jsx("span", { className: "sw-app__tag", "aria-hidden": "true", children: "All DertWerk Applications" })] }) })), hiddenProducts && accountUrl && (_jsx(ItemLink, { href: accountUrl, go: go, children: _jsx("span", { className: "sw-item__more", children: "Get More Apps" }) }))] })] }));
 }
 function LocationLayer({ narrow, close, triggerRef, levels, focusKey, go, }) {
     return (_jsx(Layer, { narrow: narrow, side: "sheet", align: "center", label: "Change location", close: close, triggerRef: triggerRef, children: _jsx("div", { className: "sw-loc", children: _jsx(NestedLevels, { levels: levels, index: 0, focusKey: focusKey, narrow: narrow, go: go }) }) }));
