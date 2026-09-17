@@ -58,6 +58,67 @@ export function useConfirmLeave() {
     return ctx?.confirmLeave ?? (() => true);
 }
 /* ------------------------------------------------------------------------ */
+/* New builds                                                                */
+/* ------------------------------------------------------------------------ */
+const UPDATE_EVERY_MS = 10 * 60 * 1000;
+const UPDATE_MIN_GAP_MS = 60 * 1000;
+/** The entry script a page loads, e.g. "/assets/index-DWQ52SwN.js". Vite puts
+ *  a content hash in the name, so a different name means a different build. */
+function entryScript(doc) {
+    const src = doc.querySelector('script[type="module"][src]')?.getAttribute('src');
+    if (!src)
+        return null;
+    const path = new URL(src, window.location.origin).pathname;
+    // Only built pages. The dev server's entry is /src/main.tsx, which never changes.
+    return /\/assets\/[^/]+\.js$/.test(path) ? path : null;
+}
+/**
+ * The entry script of a newer build than this tab is running, or null.
+ *
+ * A single-page app loads its code once. Moving between its pages only fetches
+ * data, so an open tab runs the build it started with until a real reload --
+ * people were testing fixes that had shipped hours earlier without them.
+ */
+function useNewBuild() {
+    const [newer, setNewer] = useState(null);
+    useEffect(() => {
+        const running = entryScript(document);
+        if (!running)
+            return;
+        let last = 0;
+        let stopped = false;
+        const check = async () => {
+            const now = Date.now();
+            if (stopped || document.visibilityState !== 'visible' || now - last < UPDATE_MIN_GAP_MS)
+                return;
+            last = now;
+            try {
+                const res = await fetch(`${window.location.origin}/`, { cache: 'no-store', credentials: 'same-origin' });
+                if (!res.ok)
+                    return;
+                const html = await res.text();
+                const live = entryScript(new DOMParser().parseFromString(html, 'text/html'));
+                if (live && live !== running && !stopped)
+                    setNewer(live);
+            }
+            catch {
+                // Offline or blocked: try again at the next chance.
+            }
+        };
+        const timer = window.setInterval(check, UPDATE_EVERY_MS);
+        const onVisible = () => void check();
+        document.addEventListener('visibilitychange', onVisible);
+        window.addEventListener('focus', onVisible);
+        return () => {
+            stopped = true;
+            window.clearInterval(timer);
+            document.removeEventListener('visibilitychange', onVisible);
+            window.removeEventListener('focus', onVisible);
+        };
+    }, []);
+    return newer;
+}
+/* ------------------------------------------------------------------------ */
 /* Small pieces                                                              */
 /* ------------------------------------------------------------------------ */
 function useNarrow(maxWidth = 760) {
@@ -255,6 +316,8 @@ export default function SuiteShell(props) {
     const locationTrigger = useRef(null);
     const feedbackHost = useRef(null);
     const hasSidebar = layout === 'workspace' && nav.length > 0 && !narrow;
+    const newBuild = useNewBuild();
+    const [laterFor, setLaterFor] = useState(null);
     return (_jsx(GuardContext.Provider, { value: guardApi, children: _jsxs("div", { className: `sw-shell sw-shell--${layout}${scroll === 'contained' ? ' sw-shell--contained' : ''}${hasSidebar ? ' sw-shell--sidebar' : ''}`, children: [_jsxs("header", { className: "sw-bar", children: [_jsx("button", { ref: appsTrigger, type: "button", className: `sw-bar__apps${layer === 'apps' ? ' is-open' : ''}`, "aria-expanded": layer === 'apps', "aria-haspopup": "dialog", "aria-label": narrow ? 'Menu' : `${self?.name ?? app} menu`, onClick: () => setLayer(layer === 'apps' ? null : 'apps'), children: narrow ? (_jsxs(_Fragment, { children: [Icon.menu, _jsx("span", { className: "sw-bar__menu-label", children: "Menu" })] })) : (_jsxs(_Fragment, { children: [Icon.grid, _jsx("span", { className: "sw-bar__name", children: _jsx(AppName, { id: app, name: self?.name ?? app }) }), Icon.chevron] })) }), _jsxs("nav", { className: "sw-bar__location", "aria-label": "Location", children: [barLevels.length === 0 &&
                                     // Nothing to switch to at any level: say where this is, without
                                     // a control that opens a menu with no choices in it. One segment
@@ -271,7 +334,7 @@ export default function SuiteShell(props) {
                         setLayer(null);
                         // The widget owns its dialog; open it through its own button.
                         feedbackHost.current?.querySelector('button')?.click();
-                    }, go: go })), _jsxs("div", { className: "sw-body", children: [hasSidebar && (_jsx("aside", { className: "sw-side", "aria-label": `${self?.name ?? app} navigation`, children: _jsx(SideNav, { items: nav, go: go }) })), _jsx("main", { className: "sw-main", children: children })] }), feedback?.enabled && (_jsx("div", { ref: feedbackHost, className: "sw-feedback", children: _jsx(FeedbackWidget, { app: feedback.app, enabled: true, submit: feedback.submit, orgId: feedback.orgId ?? orgId, buildSha: feedback.buildSha ?? null, breadcrumb: breadcrumb, className: "sw-feedback__tab" }) }))] }) }));
+                    }, go: go })), _jsxs("div", { className: "sw-body", children: [hasSidebar && (_jsx("aside", { className: "sw-side", "aria-label": `${self?.name ?? app} navigation`, children: _jsx(SideNav, { items: nav, go: go }) })), _jsx("main", { className: "sw-main", children: children })] }), feedback?.enabled && (_jsx("div", { ref: feedbackHost, className: "sw-feedback", children: _jsx(FeedbackWidget, { app: feedback.app, enabled: true, submit: feedback.submit, orgId: feedback.orgId ?? orgId, buildSha: feedback.buildSha ?? null, breadcrumb: breadcrumb, className: "sw-feedback__tab" }) })), newBuild && newBuild !== laterFor && (_jsxs("div", { className: "sw-update", role: "status", children: [_jsxs("span", { children: ["A new version of ", self?.name ?? 'this app', " is available."] }), _jsxs("div", { className: "sw-update__actions", children: [_jsx("button", { type: "button", className: "sw-btn sw-btn--primary", onClick: () => window.location.reload(), children: "Reload" }), _jsx("button", { type: "button", className: "sw-btn", onClick: () => setLaterFor(newBuild), children: "Later" })] })] }))] }) }));
 }
 /* ------------------------------------------------------------------------ */
 /* Layers                                                                    */

@@ -190,6 +190,65 @@ export function useConfirmLeave(): () => boolean {
 }
 
 /* ------------------------------------------------------------------------ */
+/* New builds                                                                */
+/* ------------------------------------------------------------------------ */
+
+const UPDATE_EVERY_MS = 10 * 60 * 1000
+const UPDATE_MIN_GAP_MS = 60 * 1000
+
+/** The entry script a page loads, e.g. "/assets/index-DWQ52SwN.js". Vite puts
+ *  a content hash in the name, so a different name means a different build. */
+function entryScript(doc: Document): string | null {
+  const src = doc.querySelector<HTMLScriptElement>('script[type="module"][src]')?.getAttribute('src')
+  if (!src) return null
+  const path = new URL(src, window.location.origin).pathname
+  // Only built pages. The dev server's entry is /src/main.tsx, which never changes.
+  return /\/assets\/[^/]+\.js$/.test(path) ? path : null
+}
+
+/**
+ * The entry script of a newer build than this tab is running, or null.
+ *
+ * A single-page app loads its code once. Moving between its pages only fetches
+ * data, so an open tab runs the build it started with until a real reload --
+ * people were testing fixes that had shipped hours earlier without them.
+ */
+function useNewBuild(): string | null {
+  const [newer, setNewer] = useState<string | null>(null)
+  useEffect(() => {
+    const running = entryScript(document)
+    if (!running) return
+    let last = 0
+    let stopped = false
+    const check = async () => {
+      const now = Date.now()
+      if (stopped || document.visibilityState !== 'visible' || now - last < UPDATE_MIN_GAP_MS) return
+      last = now
+      try {
+        const res = await fetch(`${window.location.origin}/`, { cache: 'no-store', credentials: 'same-origin' })
+        if (!res.ok) return
+        const html = await res.text()
+        const live = entryScript(new DOMParser().parseFromString(html, 'text/html'))
+        if (live && live !== running && !stopped) setNewer(live)
+      } catch {
+        // Offline or blocked: try again at the next chance.
+      }
+    }
+    const timer = window.setInterval(check, UPDATE_EVERY_MS)
+    const onVisible = () => void check()
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', onVisible)
+    return () => {
+      stopped = true
+      window.clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', onVisible)
+    }
+  }, [])
+  return newer
+}
+
+/* ------------------------------------------------------------------------ */
 /* Small pieces                                                              */
 /* ------------------------------------------------------------------------ */
 
@@ -471,6 +530,9 @@ export default function SuiteShell(props: SuiteShellProps) {
 
   const hasSidebar = layout === 'workspace' && nav.length > 0 && !narrow
 
+  const newBuild = useNewBuild()
+  const [laterFor, setLaterFor] = useState<string | null>(null)
+
   return (
     <GuardContext.Provider value={guardApi}>
       <div
@@ -642,6 +704,21 @@ export default function SuiteShell(props: SuiteShellProps) {
               breadcrumb={breadcrumb}
               className="sw-feedback__tab"
             />
+          </div>
+        )}
+        {newBuild && newBuild !== laterFor && (
+          <div className="sw-update" role="status">
+            <span>A new version of {self?.name ?? 'this app'} is available.</span>
+            <div className="sw-update__actions">
+              {/* A plain reload: unsaved work is already protected by the
+                  browser's own leave-page prompt (useUnsavedChanges). */}
+              <button type="button" className="sw-btn sw-btn--primary" onClick={() => window.location.reload()}>
+                Reload
+              </button>
+              <button type="button" className="sw-btn" onClick={() => setLaterFor(newBuild)}>
+                Later
+              </button>
+            </div>
           </div>
         )}
       </div>

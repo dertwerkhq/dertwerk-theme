@@ -71,6 +71,10 @@ Both use the same drawer on a phone (≤760px).
   `aria-label`s, placeholders.
 - Put the org name in the heading of settings pages, and in any confirmation of
   a consequential action.
+- Nothing to do for new builds: the shell notices when the site serves a newer
+  build than the open tab is running (on focus, and every 10 minutes) and offers
+  Reload. It compares the `/assets/index-*.js` entry in `/`, so an app must stay
+  a Vite build served from its own origin root.
 
 ## New app checklist
 

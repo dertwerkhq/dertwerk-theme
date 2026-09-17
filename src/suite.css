@@ -738,6 +738,35 @@
   color: var(--ink, #e5e7eb);
 }
 
+/* --- new build notice ---------------------------------------------------- */
+/* Bottom centre, clear of the bar, the feedback tab at the right edge and map
+   controls in the corners. Above page content, below the shell's menus. */
+.sw-update {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  transform: translateX(-50%);
+  z-index: 850;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: calc(100vw - 2rem);
+  box-sizing: border-box;
+  padding: 0.6rem 0.6rem 0.6rem 1rem;
+  background: var(--surface, #222d3c);
+  color: var(--ink, #e5e7eb);
+  border: 1px solid var(--edge-strong, var(--edge, #374151));
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  font-size: 0.9rem;
+}
+
+.sw-update__actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
 /* --- narrow --------------------------------------------------------------- */
 
 @media (max-width: 760px) {
@@ -775,5 +804,14 @@
   .sw-feedback {
     top: auto;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+  }
+
+  /* Full width on a phone, the message above its buttons. */
+  .sw-update {
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+    max-width: none;
+    flex-wrap: wrap;
   }
 }
