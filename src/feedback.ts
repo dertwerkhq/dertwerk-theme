@@ -35,6 +35,7 @@ export type FeedbackApp =
   | 'farmrx'
   | 'fsacre'
   | 'agplication'
+  | 'geotally'
   | 'account'
   | 'admin'
   | 'landing'

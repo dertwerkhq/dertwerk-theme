@@ -405,6 +405,13 @@ function AppName({ id, name }: { id: string; name: string }) {
           {name}
         </span>
       )
+    case 'geotally':
+      return (
+        <span className="sw-mark sw-mark--geotally" aria-label={name}>
+          <span className="sw-mark__green" aria-hidden="true">Geo</span>
+          <span className="sw-mark__blue" aria-hidden="true">tally</span>
+        </span>
+      )
     case 'machinery':
       return <span className="sw-mark sw-mark--metal">{name}</span>
     default:

@@ -30,7 +30,7 @@
  * Not the same list as an organization's entitlements. The three dertwerk
  * sites are not products anybody buys, but they are very much places a new
  * user gets lost. */
-export type FeedbackApp = 'farmrx' | 'fsacre' | 'agplication' | 'account' | 'admin' | 'landing';
+export type FeedbackApp = 'farmrx' | 'fsacre' | 'agplication' | 'geotally' | 'account' | 'admin' | 'landing';
 export type FeedbackCategory = 'confusing' | 'broken' | 'suggestion' | 'other';
 export interface ConsoleErrorEntry {
     at: string;
