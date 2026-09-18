@@ -225,6 +225,8 @@ function AppName({ id, name }) {
             return (_jsxs("span", { className: "sw-mark sw-mark--fsacre", "aria-label": name, children: [_jsx("span", { className: "sw-mark__green", "aria-hidden": "true", children: "FS" }), _jsx("span", { className: "sw-mark__split", "aria-hidden": "true", children: "A" }), _jsx("span", { className: "sw-mark__blue", "aria-hidden": "true", children: "cre" })] }));
         case 'agplication':
             return (_jsxs("span", { className: "sw-mark sw-mark--agplication", children: [_jsx("img", { className: "sw-mark__icon", src: AGPLICATION_ICON, alt: "", "aria-hidden": "true" }), name] }));
+        case 'geotally':
+            return (_jsxs("span", { className: "sw-mark sw-mark--geotally", "aria-label": name, children: [_jsx("span", { className: "sw-mark__green", "aria-hidden": "true", children: "Geo" }), _jsx("span", { className: "sw-mark__blue", "aria-hidden": "true", children: "tally" })] }));
         case 'machinery':
             return _jsx("span", { className: "sw-mark sw-mark--metal", children: name });
         default:
