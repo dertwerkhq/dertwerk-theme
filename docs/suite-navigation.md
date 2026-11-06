@@ -82,9 +82,14 @@ Both use the same drawer on a phone (≤760px).
    (`ALLOWED_APPS`, `PRODUCT_APPS`) is a separate, deliberate decision.
 2. Add its origin to the API's CORS list (`infra/lib/compute-stack.ts`).
 3. Regenerate the snapshot here: `node scripts/snapshot-catalog.mjs`, then
-   release.
-4. Wrap the app in `SuiteShell` with `layout`, `nav` and `location`.
-5. Check it at 390px: nothing cut off, and Sign out reachable.
+   release. (An app the production API does not list yet, because its flag is
+   off, has to be added to the snapshot by hand; see `src/catalog.ts`.)
+4. Add its id to `FeedbackApp` in `src/feedback.ts` and to `FEEDBACK_APPS` in
+   `farm-analytics-api/api/schemas/feedback.py`, together. One without the
+   other is a 422 when someone sends feedback from the app.
+5. If its brand draws the name, add a case to `AppName` in `src/SuiteShell.tsx`.
+6. Wrap the app in `SuiteShell` with `layout`, `nav` and `location`.
+7. Check it at 390px: nothing cut off, and Sign out reachable.
 
 ## Releasing
 

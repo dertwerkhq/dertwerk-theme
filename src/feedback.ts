@@ -36,6 +36,7 @@ export type FeedbackApp =
   | 'fsacre'
   | 'agplication'
   | 'geotally'
+  | 'rxeval'
   | 'account'
   | 'admin'
   | 'landing'

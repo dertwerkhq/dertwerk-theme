@@ -412,6 +412,13 @@ function AppName({ id, name }: { id: string; name: string }) {
           <span className="sw-mark__blue" aria-hidden="true">tally</span>
         </span>
       )
+    case 'rxeval':
+      return (
+        <span className="sw-mark sw-mark--rxeval" aria-label={name}>
+          <span className="sw-mark__green" aria-hidden="true">Rx</span>
+          <span className="sw-mark__blue" aria-hidden="true">Eval</span>
+        </span>
+      )
     case 'machinery':
       return <span className="sw-mark sw-mark--metal">{name}</span>
     default:
