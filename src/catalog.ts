@@ -5,9 +5,16 @@
  * The record lives in the API (`GET /api/v1/apps`, backed by
  * `farm-analytics-api/api/app_registry.py`). The copy in catalogSnapshot.ts is
  * what renders before that answers, and for anyone the API cannot reach. It is
- * GENERATED -- `node scripts/snapshot-catalog.mjs` -- and CI fails when it has
- * drifted from the live list, because a hand-kept copy is exactly how the app
- * list ended up in fifteen files that disagreed.
+ * GENERATED -- `node scripts/snapshot-catalog.mjs` -- because a hand-kept copy
+ * is exactly how the app list ended up in fifteen files that disagreed. Run
+ * `node scripts/snapshot-catalog.mjs --check` before a release to see whether
+ * it has drifted from the live list. CI does not run that check: it would make
+ * every build depend on the production API.
+ *
+ * One deliberate exception: the `rxeval` entry was added by hand, copied from
+ * app_registry.py, because the production API lists RxEval only while
+ * RXEVAL_ENABLED is on and it is off as of v1.12.0. Until it is on, `--check`
+ * reports that entry as drift; regenerating would drop it.
  *
  * This is display data. Whether a person may open an application comes from
  * their memberships on /me, never from here.

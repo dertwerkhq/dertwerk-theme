@@ -36,6 +36,28 @@ export const CATALOG_SNAPSHOT: SuiteApp[] = [
     "org_path": "/orgs/{org_id}"
   },
   {
+    "id": "geotally",
+    "name": "Geotally",
+    "tagline": "Geofence Visits & Reports",
+    "kind": "product",
+    "status": "beta",
+    "url": "https://geotally.dertwerk.com",
+    "public_browse": false,
+    "request_access": true,
+    "org_path": "/orgs/{org_id}"
+  },
+  {
+    "id": "rxeval",
+    "name": "RxEval",
+    "tagline": "As-Applied Rate Comparisons",
+    "kind": "product",
+    "status": "beta",
+    "url": "https://rxeval.dertwerk.com",
+    "public_browse": false,
+    "request_access": true,
+    "org_path": "/orgs/{org_id}"
+  },
+  {
     "id": "machinery",
     "name": "Machinery",
     "tagline": "Equipment Rental & Sales",
